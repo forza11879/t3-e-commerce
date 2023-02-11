@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import Link from "next/link";
 // import firebase from "firebase";
-import { signIn, signOut, useSession } from "next-auth/react";
+// import { signIn, signOut, useSession } from "next-auth/react";
 // import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { Menu, Badge, Typography } from "antd";
+import type { MenuProps } from "antd";
+
 // import dynamic from 'next/dynamic';
 // const { Badge } = dynamic(() => import('antd'), {
 //   ssr: false,
@@ -16,19 +18,89 @@ import {
   UserAddOutlined,
   LogoutOutlined,
   ShoppingOutlined,
+  MailOutlined,
   ShoppingCartOutlined,
 } from "@ant-design/icons";
+
 // import { parseCookies, setCookie, destroyCookie } from "nookies";
 // import { selectUser, getUserLoggedOut } from "@/store/user";
 // import { selectCart } from "@/store/cart";
 // // import Search from "@/components/forms/Search";
 // import ColumnGroup from "antd/lib/table/ColumnGroup";
+const session = true;
 
-const { SubMenu, Item } = Menu;
+const items: MenuProps["items"] = [
+  {
+    label: <Link href="/">Home</Link>,
+    key: "home",
+    icon: <AppstoreOutlined />,
+  },
+  {
+    label: (
+      <Link href="/cart">
+        <Badge offset={[9, 0]}>Cart</Badge>
+      </Link>
+    ),
+    key: "cart",
+    icon: <ShoppingCartOutlined />,
+  },
+  {
+    label: (
+      <div className="float-right">
+        <Link href="/register">Register</Link>
+      </div>
+    ),
+    key: "register",
+    icon: <UserAddOutlined />,
+  },
+  {
+    label: (
+      <div className="float-right">
+        <Link href="/login">Login</Link>
+      </div>
+    ),
+    key: "login",
+    icon: <UserOutlined />,
+  },
+  {
+    label: Boolean(session) && <div className="float-right">Submenu</div>,
+    key: "SubMenu",
+    icon: <SettingOutlined />,
+    children: [
+      {
+        label: <Link href="/user/history">Dashboard</Link>,
+        key: "Dashboard",
+      },
+      {
+        label: <Link href="/admin/dashboard">Dashboard</Link>,
+        key: "Dashboard",
+      },
+      {
+        label: (
+          <Link href="/api/auth/signout">
+            {/* onClick={(e) => {
+                e.preventDefault();
+                signOut();
+                logout();
+              }} */}
+            Sign Out
+          </Link>
+        ),
+        key: "SignOut",
+        icon: <LogoutOutlined />,
+      },
+    ],
+  },
+];
 
-const Header = () => {
+const Header: React.FC = () => {
   const [current, setCurrent] = useState("home");
-  const { data: session, status } = useSession();
+  // const { data: session, status } = useSession();
+
+  const onClick: MenuProps["onClick"] = (e) => {
+    console.log("click ", e);
+    setCurrent(e.key);
+  };
 
   // console.log({ session, status });
   const router = useRouter();
@@ -60,118 +132,11 @@ const Header = () => {
 
   return (
     <Menu
-      // defaultOpenKeys={['1']}
-      // onClick={handleClick}
+      onClick={onClick}
       selectedKeys={[current]}
       mode="horizontal"
-    >
-      <Item key="home" icon={<AppstoreOutlined />}>
-        <Link href="/">Home</Link>
-      </Item>
-
-      {/* <Item key="shop" icon={<ShoppingOutlined />}>
-        <Link href="/shop">Shop</Link>
-      </Item> */}
-
-      <Item key="cart" icon={<ShoppingCartOutlined />}>
-        <Link href="/cart">
-          {/* <MyBadge /> */}
-          {/* <a> */}
-          {/* <span>
-              <sup> */}
-          <Badge
-            // count={cart.reduce((acc, currentValue) => {
-            //   return (acc = acc + currentValue.count);
-            // }, 0)}
-            offset={[9, 0]}
-          >
-            Cart
-          </Badge>
-          {/* </sup>
-            </span> */}
-          {/* </a> */}
-
-          {/* fix Badge TODO */}
-        </Link>
-      </Item>
-
-      {/* {!Boolean(user.email && user.token) && (
-        <Item key="register" icon={<UserAddOutlined />} className="float-right">
-          <Link href="/register">Register</Link>
-        </Item>
-      )} */}
-
-      {status !== "loading" && !Boolean(session) && (
-        <Item key="register" icon={<UserAddOutlined />} className="float-right">
-          <Link href="/register">Register</Link>
-        </Item>
-      )}
-
-      {/* {!Boolean(user.email && user.token) && (
-        <Item key="login" icon={<UserOutlined />} className="float-right">
-          <Link href="/login">Login</Link>
-        </Item>
-      )} */}
-      {/* {!Boolean(user.email && user.token) && (
-        <Item key="login" icon={<UserOutlined />} className="float-right">
-          <Link href="/login">Login</Link>
-          <Link href="/api/auth/signin">
-            <a
-              onClick={(e) => {
-                e.preventDefault();
-                signIn('google');
-              }}
-            >
-              Sign In
-            </a>
-          </Link>
-        </Item>
-      )} */}
-      {status !== "loading" &&
-        !Boolean(session) &&
-        Boolean(router.pathname !== "/login") && (
-          <Item key="login" icon={<UserOutlined />} className="float-right">
-            <Link href="/login">Login</Link>
-          </Item>
-        )}
-
-      {Boolean(session) && (
-        <SubMenu
-          icon={<SettingOutlined />}
-          // title={user.email && user.email.split("@")[0]}
-          className="float-right"
-        >
-          {/* {Boolean(user.token) && user.role === "subscriber" && (
-            <Item>
-              <Link href="/user/history">Dashboard</Link>
-            </Item>
-          )}
-
-          {Boolean(user.token) && user.role === "admin" && (
-            <Item>
-              <Link href="/admin/dashboard">Dashboard</Link>
-            </Item>
-          )} */}
-          {/* <Item icon={<LogoutOutlined />} onClick={logout}>
-            Logout
-          </Item> */}
-          <Item icon={<LogoutOutlined />}>
-            <Link href="/api/auth/signout">
-              {/* <a
-                onClick={(e) => {
-                  e.preventDefault();
-                  // signOut();
-                  // logout();
-                }}
-              >
-                Sign Out
-              </a> */}
-            </Link>
-          </Item>
-        </SubMenu>
-      )}
-      <span className="float-right p-1">{/* <Search /> */}</span>
-    </Menu>
+      items={items}
+    />
   );
 };
 
