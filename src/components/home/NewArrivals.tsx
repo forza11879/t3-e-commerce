@@ -1,18 +1,20 @@
-import { Pagination } from 'antd';
-import ProductCard from '@/components/cards/ProductCard';
-import LoadingCard from '@/components/cards/LoadingCard';
+import { Pagination } from "antd";
+import ProductCard from "@/components/cards/ProductCard";
+import LoadingCard from "@/components/cards/LoadingCard";
 
-const NewArrivals = ({
-  productsCountQuery,
-  newArrivalsQuery,
-  count,
-  page,
-  setPage,
-}) => {
+const NewArrivals = (
+  {
+    // productsCountQuery,
+    // newArrivalsQuery,
+    // count,
+    // page,
+    // setPage,
+  }
+) => {
   return (
     <>
       <div className="container">
-        {newArrivalsQuery.isLoading ? (
+        {/* {newArrivalsQuery.isLoading ? (
           <LoadingCard count={count} />
         ) : (
           <div className="row">
@@ -22,15 +24,15 @@ const NewArrivals = ({
               </div>
             ))}
           </div>
-        )}
+        )} */}
       </div>
       <div className="row">
-        <nav className="col-md-4 offset-md-4 text-center pt-5 p-3">
-          <Pagination
+        <nav className="col-md-4 offset-md-4 p-3 pt-5 text-center">
+          {/* <Pagination
             current={page}
             total={(productsCountQuery.data / 3) * 10}
             onChange={(value) => setPage(value)}
-          />
+          /> */}
         </nav>
       </div>
     </>

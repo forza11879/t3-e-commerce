@@ -1,6 +1,10 @@
-import Typewriter from 'typewriter-effect';
+import Typewriter from "typewriter-effect";
 
-const Jumbotron = ({ text }) => (
+type AppProps = {
+  text: string[];
+};
+
+const Jumbotron = ({ text }: AppProps) => (
   <Typewriter
     options={{
       strings: text,

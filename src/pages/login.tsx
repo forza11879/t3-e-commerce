@@ -1,14 +1,17 @@
-import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { signIn, signOut, useSession, getSession } from 'next-auth/client';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
-import { toast } from 'react-toastify';
-import { Button } from 'antd';
-import { MailOutlined, GoogleOutlined } from '@ant-design/icons';
-import { auth, googleAuthProvider } from '@/lib/firebase';
-import { selectUser } from '@/store/user';
-import { fetchApi } from '@/store/saga/user';
+import { type NextPage } from "next";
+import React, { useState, useEffect } from "react";
+// import { useSelector } from "react-redux";
+import { signIn, signOut, useSession, getSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import Link from "next/link";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+import { Button } from "antd";
+import { MailOutlined, GoogleOutlined } from "@ant-design/icons";
+// import { auth, googleAuthProvider } from "@/lib/firebase";
+import { selectUser } from "@/store/user";
+import { fetchApi } from "@/store/saga/user";
 
 // const roleBasedRedirect = (user, router) => {
 //   console.log('router login: ', router);
@@ -20,37 +23,37 @@ import { fetchApi } from '@/store/saga/user';
 //   }
 // };
 
-const roleBasedRedirect = (user, router, intented) => {
-  if (intented) {
-    router.push(intented);
-  } else {
-    if (user.role === 'admin') {
-      router.push('/admin/dashboard');
-    } else {
-      router.push('/user/history');
-    }
-  }
-};
+// const roleBasedRedirect = (user, router, intented) => {
+//   if (intented) {
+//     router.push(intented);
+//   } else {
+//     if (user.role === "admin") {
+//       router.push("/admin/dashboard");
+//     } else {
+//       router.push("/user/history");
+//     }
+//   }
+// };
 
-function redirect(token, router, intented) {
-  const options = {
-    url: '/user',
-    method: 'get',
-    token: token,
-  };
-  fetchApi(options).then(({ data: { user } }) => {
-    roleBasedRedirect(user, router, intented);
-  });
-}
+// function redirect(token, router, intented) {
+//   const options = {
+//     url: "/user",
+//     method: "get",
+//     token: token,
+//   };
+//   fetchApi(options).then(({ data: { user } }) => {
+//     roleBasedRedirect(user, router, intented);
+//   });
+// }
 
-const LoginPage = () => {
+const LoginPage: NextPage = () => {
   const router = useRouter();
-  const [email, setEmail] = useState('forza11879@gmail.com');
-  const [password, setPassword] = useState('test78');
+  const [email, setEmail] = useState("forza11879@gmail.com");
+  const [password, setPassword] = useState("test78");
   const [loading, setLoading] = useState(false);
-  const [session, loadingNextAuth] = useSession();
-  console.log({ session, loadingNextAuth });
-  console.log('session boolean', Boolean(session));
+  const { data: session, status } = useSession();
+  // console.log({ session, loadingNextAuth });
+  console.log("session boolean", Boolean(session));
   // console.log({ loadingNextAuth });
 
   const intented = router.query.from;
@@ -61,18 +64,18 @@ const LoginPage = () => {
     //   router.push(intented);
     // }
     if (session && !intented) {
-      console.log('!intented: ', !intented);
-      router.push('/');
+      console.log("!intented: ", !intented);
+      router.push("/");
     } else {
-      console.log('page');
+      console.log("page");
     }
 
-    console.log('page2');
+    console.log("page2");
     // const session2 = await getSession();
     // console.log({ session2 });
   }, [session]);
 
-  const userResult = useSelector(selectUser);
+  // const userResult = useSelector(selectUser);
 
   // console.log({ intented });
 
@@ -80,30 +83,32 @@ const LoginPage = () => {
   //   if (userResult && userResult.token) router.push(`/`);
   // }, [userResult]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const { user } = await auth.signInWithEmailAndPassword(email, password);
-      const { token } = await user.getIdTokenResult();
-      redirect(token, router, intented);
+      // const { user } = await auth.signInWithEmailAndPassword(email, password);
+      // const { token } = await user.getIdTokenResult();
+      // redirect(token, router, intented);
     } catch (error) {
       console.log(error);
-      toast.error(error.message);
+      // toast.error(error.message, {
+      //   position: toast.POSITION.TOP_LEFT,
+      // });
       setLoading(false);
     }
   };
 
-  const googleLogin = async () => {
-    try {
-      const { user } = await auth.signInWithPopup(googleAuthProvider);
-      const { token } = await user.getIdTokenResult();
-      redirect(token, router, intented);
-    } catch (error) {
-      console.log('googleLogin error: ', error);
-      toast.error(error.message);
-    }
-  };
+  // const googleLogin = async () => {
+  //   try {
+  //     const { user } = await auth.signInWithPopup(googleAuthProvider);
+  //     const { token } = await user.getIdTokenResult();
+  //     redirect(token, router, intented);
+  //   } catch (error) {
+  //     console.log("googleLogin error: ", error);
+  //     toast.error(error.message);
+  //   }
+  // };
 
   const loginForm = () => (
     <form onSubmit={handleSubmit}>
@@ -132,6 +137,7 @@ const LoginPage = () => {
       <Button
         onClick={handleSubmit}
         type="primary"
+        danger
         className="mb-3"
         block
         shape="round"
@@ -148,13 +154,13 @@ const LoginPage = () => {
     <div className="container p-5">
       <div className="row">
         <div className="col-md-6 offset-md-3">
-          {loadingNextAuth ? (
+          {status === "loading" ? (
             <h4 className="text-danger">Loading...</h4>
           ) : (
             <h4>Login</h4>
           )}
           {loginForm()}
-
+          <ToastContainer />;
           {/* <Button
           // onClick={googleLogin}
           type="danger"
@@ -167,16 +173,16 @@ const LoginPage = () => {
           {/* {!session && ( */}
           <Link href="/api/auth/signin">
             <Button
-              onClick={(e) => {
-                e.preventDefault();
-                signIn('google', {
-                  callbackUrl: `${process.env.host}${
-                    !intented ? '' : intented
-                  }`,
-                });
-              }}
+              // onClick={(e) => {
+              //   e.preventDefault();
+              //   signIn("google", {
+              //     callbackUrl: `${process.env.host}${
+              //       !intented ? "" : intented
+              //     }`,
+              //   });
+              // }}
               // onClick={googleLogin}
-              type="danger"
+              type="primary"
               className="mb-3"
               block
               shape="round"
@@ -188,11 +194,9 @@ const LoginPage = () => {
             </Button>
           </Link>
           {/* )} */}
-
           {/* Login with Google
         </Button> */}
-
-          <Link href="/forgot/password" className="float-right text-danger">
+          <Link href="/forgot/password" className="text-danger float-right">
             Forgot Password
           </Link>
         </div>

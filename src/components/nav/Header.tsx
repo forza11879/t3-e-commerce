@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import Link from 'next/link';
-import firebase from 'firebase';
-import { signIn, signOut, useSession } from 'next-auth/client';
-import { useDispatch, useSelector } from 'react-redux';
-import { useRouter } from 'next/router';
-import { Menu, Badge, Typography } from 'antd';
+import React, { useState } from "react";
+import Link from "next/link";
+// import firebase from "firebase";
+import { signIn, signOut, useSession } from "next-auth/react";
+// import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/router";
+import { Menu, Badge, Typography } from "antd";
 // import dynamic from 'next/dynamic';
 // const { Badge } = dynamic(() => import('antd'), {
 //   ssr: false,
@@ -17,50 +17,51 @@ import {
   LogoutOutlined,
   ShoppingOutlined,
   ShoppingCartOutlined,
-} from '@ant-design/icons';
-import { parseCookies, setCookie, destroyCookie } from 'nookies';
-import { selectUser, getUserLoggedOut } from '@/store/user';
-import { selectCart } from '@/store/cart';
-import Search from '@/components/forms/Search';
-import ColumnGroup from 'antd/lib/table/ColumnGroup';
+} from "@ant-design/icons";
+// import { parseCookies, setCookie, destroyCookie } from "nookies";
+// import { selectUser, getUserLoggedOut } from "@/store/user";
+// import { selectCart } from "@/store/cart";
+// // import Search from "@/components/forms/Search";
+// import ColumnGroup from "antd/lib/table/ColumnGroup";
 
 const { SubMenu, Item } = Menu;
 
 const Header = () => {
-  const [current, setCurrent] = useState('home');
-  const [session, loading] = useSession();
-  console.log({ session, loading });
+  const [current, setCurrent] = useState("home");
+  const { data: session, status } = useSession();
+
+  // console.log({ session, status });
   const router = useRouter();
   // console.log({ router });
 
-  const dispatch = useDispatch();
-  const user = useSelector(selectUser);
-  const cart = useSelector(selectCart);
+  // const dispatch = useDispatch();
+  // const user = useSelector(selectUser);
+  // const cart = useSelector(selectCart);
 
-  const MyBadge = React.forwardRef(({ onClick, href }, ref) => {
-    return (
-      <a href={href} onClick={onClick} ref={ref}>
-        <Badge count={cart.length} offset={[9, 0]}>
-          Cart
-        </Badge>
-      </a>
-    );
-  });
+  // const MyBadge = React.forwardRef(({ onClick, href }, ref) => {
+  //   return (
+  //     <a href={href} onClick={onClick} ref={ref}>
+  //       <Badge count={cart.length} offset={[9, 0]}>
+  //         Cart
+  //       </Badge>
+  //     </a>
+  //   );
+  // });
 
-  const handleClick = (e) => {
-    // console.log(e.key);
-    setCurrent(e.key);
-  };
+  // const handleClick = (e) => {
+  //   // console.log(e.key);
+  //   setCurrent(e.key);
+  // };
 
-  const logout = () => {
-    firebase.auth().signOut();
-    dispatch(getUserLoggedOut());
-  };
+  // const logout = () => {
+  //   firebase.auth().signOut();
+  //   dispatch(getUserLoggedOut());
+  // };
 
   return (
     <Menu
       // defaultOpenKeys={['1']}
-      onClick={handleClick}
+      // onClick={handleClick}
       selectedKeys={[current]}
       mode="horizontal"
     >
@@ -68,27 +69,27 @@ const Header = () => {
         <Link href="/">Home</Link>
       </Item>
 
-      <Item key="shop" icon={<ShoppingOutlined />}>
+      {/* <Item key="shop" icon={<ShoppingOutlined />}>
         <Link href="/shop">Shop</Link>
-      </Item>
+      </Item> */}
 
       <Item key="cart" icon={<ShoppingCartOutlined />}>
         <Link href="/cart">
           {/* <MyBadge /> */}
-          <a>
-            {/* <span>
+          {/* <a> */}
+          {/* <span>
               <sup> */}
-            <Badge
-              count={cart.reduce((acc, currentValue) => {
-                return (acc = acc + currentValue.count);
-              }, 0)}
-              offset={[9, 0]}
-            >
-              Cart
-            </Badge>
-            {/* </sup>
+          <Badge
+            // count={cart.reduce((acc, currentValue) => {
+            //   return (acc = acc + currentValue.count);
+            // }, 0)}
+            offset={[9, 0]}
+          >
+            Cart
+          </Badge>
+          {/* </sup>
             </span> */}
-          </a>
+          {/* </a> */}
 
           {/* fix Badge TODO */}
         </Link>
@@ -100,7 +101,7 @@ const Header = () => {
         </Item>
       )} */}
 
-      {!Boolean(loading) && !Boolean(session) && (
+      {status !== "loading" && !Boolean(session) && (
         <Item key="register" icon={<UserAddOutlined />} className="float-right">
           <Link href="/register">Register</Link>
         </Item>
@@ -126,9 +127,9 @@ const Header = () => {
           </Link>
         </Item>
       )} */}
-      {!Boolean(loading) &&
+      {status !== "loading" &&
         !Boolean(session) &&
-        Boolean(router.pathname !== '/login') && (
+        Boolean(router.pathname !== "/login") && (
           <Item key="login" icon={<UserOutlined />} className="float-right">
             <Link href="/login">Login</Link>
           </Item>
@@ -137,41 +138,39 @@ const Header = () => {
       {Boolean(session) && (
         <SubMenu
           icon={<SettingOutlined />}
-          title={user.email && user.email.split('@')[0]}
+          // title={user.email && user.email.split("@")[0]}
           className="float-right"
         >
-          {Boolean(user.token) && user.role === 'subscriber' && (
+          {/* {Boolean(user.token) && user.role === "subscriber" && (
             <Item>
               <Link href="/user/history">Dashboard</Link>
             </Item>
           )}
 
-          {Boolean(user.token) && user.role === 'admin' && (
+          {Boolean(user.token) && user.role === "admin" && (
             <Item>
               <Link href="/admin/dashboard">Dashboard</Link>
             </Item>
-          )}
+          )} */}
           {/* <Item icon={<LogoutOutlined />} onClick={logout}>
             Logout
           </Item> */}
           <Item icon={<LogoutOutlined />}>
             <Link href="/api/auth/signout">
-              <a
+              {/* <a
                 onClick={(e) => {
                   e.preventDefault();
-                  signOut();
-                  logout();
+                  // signOut();
+                  // logout();
                 }}
               >
                 Sign Out
-              </a>
+              </a> */}
             </Link>
           </Item>
         </SubMenu>
       )}
-      <span className="float-right p-1">
-        <Search />
-      </span>
+      <span className="float-right p-1">{/* <Search /> */}</span>
     </Menu>
   );
 };
