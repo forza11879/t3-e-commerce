@@ -2,13 +2,12 @@ import React, { useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 import Link from "next/link";
-import { Menu, Badge, Input } from "antd";
+import { Menu, Badge } from "antd";
 import type { MenuProps } from "antd";
 import {
   AppstoreOutlined,
   SettingOutlined,
   ShoppingOutlined,
-  UserOutlined,
   UserAddOutlined,
   LogoutOutlined,
   ShoppingCartOutlined,
@@ -20,7 +19,7 @@ import Search from "@/components/forms/Search";
 const Header: React.FC = () => {
   const [current, setCurrent] = useState("home");
   const { data, status } = useSession();
-  console.log({ status });
+
   const items: MenuProps["items"] = [
     {
       label: <Link href="/">Home</Link>,
@@ -51,15 +50,6 @@ const Header: React.FC = () => {
       icon: <UserAddOutlined />,
     },
     {
-      label: (
-        <div className="float-right">
-          <Link href="/login">Login</Link>
-        </div>
-      ),
-      key: "login",
-      icon: <UserOutlined />,
-    },
-    {
       label: <div className="float-right">Submenu</div>,
       key: "SubMenu",
       icon: <SettingOutlined />,
@@ -75,20 +65,17 @@ const Header: React.FC = () => {
       ],
     },
     {
-      label: <Link href="/api/auth/signout">Sign Out</Link>,
-      key: "SignOut",
-      icon: <LogoutOutlined />,
-    },
-    {
       label:
         status === "authenticated" ? (
-          <Link href="/api/auth/signout">Sign Out</Link>
+          <div className="float-right">
+            <Link href="/api/auth/signout">Sign Out</Link>
+          </div>
         ) : (
           <div className="float-right">
             <Link href="/login">Login</Link>
           </div>
         ),
-      key: "SignOut",
+      key: "SignOutt",
       icon: <LogoutOutlined />,
     },
   ];
@@ -99,7 +86,7 @@ const Header: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center">
+    <div className="flex w-full items-center">
       <Menu
         onClick={onClick}
         selectedKeys={[current]}

@@ -1,0 +1,65 @@
+import {
+  getServerSession,
+  type NextAuthOptions,
+  type DefaultSession,
+} from "next-auth";
+import GoogleProvider from "next-auth/providers/google";
+import { env } from "../env.mjs";
+import NextAuth from 'next-auth';
+import Providers from 'next-auth/providers';
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import { prisma } from "./db";
+import { firebaseAdmin } from '../../firebase.config'
+
+interface Profile {
+  sub: string;
+  name: string;
+  picture: string;
+  email: string;
+}
+
+export const authOptions: NextAuthOptions = {
+  providers: [
+    GoogleProvider({
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
+      profile(profile: Profile) {
+        // const givenName = profile.given_name ?? "" + profile.family_name ?? "";
+        // const username = getUsername(givenName);
+        return {
+          id: profile.sub,
+          image: profile.picture,
+          name: profile.name,
+          email: profile.email,
+          // username,
+        };
+
+      },
+    }),
+    /**
+     * ...add more providers here
+     *
+     * Most other providers require a bit more work than the Discord provider.
+     * For example, the GitHub provider requires you to add the
+     * `refresh_token_expires_in` field to the Account model. Refer to the
+     * NextAuth.js docs for the provider you want to use. Example:
+     * @see https://next-auth.js.org/providers/github
+     **/
+  ],
+  adapter: PrismaAdapter(prisma),
+  callbacks: {
+    async signIn({ email }) {
+      const actionCodeSettings = {
+        url: env.NEXTAUTH_URL,
+        handleCodeInApp: true,
+      };
+      try {
+        await firebaseAdmin.auth().sendSignInLinkToEmail(email, actionCodeSettings);
+        return false; // Prevent sign-in form from being displayed
+      } catch (error) {
+        console.error(error);
+        return false; // Prevent sign-in form from being displayed
+      }
+    },
+  },
+};

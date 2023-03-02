@@ -9,7 +9,9 @@ const Search: React.FC = () => {
     <Input.Search
       onSearch={onSearch}
       placeholder="Search..."
-      className="flex-grow"
+      // className="flex-grow"
+      className="flex-shrink"
+      style={{ minWidth: "100px" }}
       prefix={<SearchOutlined />}
     />
   );
