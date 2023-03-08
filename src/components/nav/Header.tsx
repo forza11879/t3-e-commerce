@@ -41,15 +41,6 @@ const Header: React.FC = () => {
       icon: <ShoppingCartOutlined />,
     },
     {
-      label: (
-        <div className="float-right">
-          <Link href="/register">Register</Link>
-        </div>
-      ),
-      key: "register",
-      icon: <UserAddOutlined />,
-    },
-    {
       label: <div className="float-right">Submenu</div>,
       key: "SubMenu",
       icon: <SettingOutlined />,
@@ -65,19 +56,28 @@ const Header: React.FC = () => {
       ],
     },
     {
-      label:
-        status === "authenticated" ? (
-          <div className="float-right">
-            <Link href="/api/auth/signout">Sign Out</Link>
-          </div>
-        ) : (
-          <div className="float-right">
-            <Link href="/login">Login</Link>
-          </div>
-        ),
-      key: "SignOutt",
-      icon: <LogoutOutlined />,
+      label: (
+        <div className="float-right">
+          <Link href="/auth/signin">Log in</Link>
+        </div>
+      ),
+      key: "register",
+      icon: <UserAddOutlined />,
     },
+    // {
+    //   label:
+    //     status === "authenticated" ? (
+    //       <div className="float-right">
+    //         <Link href="/api/auth/signout">Sign Out</Link>
+    //       </div>
+    //     ) : (
+    //       <div className="float-right">
+    //         <Link href="/login">Login</Link>
+    //       </div>
+    //     ),
+    //   key: "SignOutt",
+    //   icon: <LogoutOutlined />,
+    // },
   ];
 
   const onClick: MenuProps["onClick"] = (e) => {
@@ -92,9 +92,9 @@ const Header: React.FC = () => {
         selectedKeys={[current]}
         mode="horizontal"
         items={items}
-        className="mr-4 flex-shrink-0"
+        // className="mr-4 flex-shrink-0"
       />
-      <Search />
+      {/* <Search /> */}
     </div>
   );
 };

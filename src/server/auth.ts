@@ -5,9 +5,9 @@ import {
   type DefaultSession,
 } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import EmailProvider from 'next-auth/providers/email';
+import EmailProvider from "next-auth/providers/email";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { createTransport } from 'nodemailer';
+import { createTransport } from "nodemailer";
 
 import { env } from "../env.mjs";
 import { prisma } from "./db";
@@ -19,63 +19,482 @@ interface Profile {
   email: string;
 }
 
-interface Theme {
-  colorScheme?: "auto" | "dark" | "light"
-  logo?: string
-  brandColor?: string
-  buttonText?: string
+interface HtmlProps {
+  base_url: string;
+  signin_url: string;
+  email: string;
 }
 
-function html(params: { url: string; host: string; theme: Theme }) {
-  const { url, host, theme } = params
-
-  const escapedHost = host.replace(/\./g, "&#8203;.")
-
-  const brandColor = theme.brandColor || "#346df1"
-  const color = {
-    background: "#f9f9f9",
-    text: "#444",
-    mainBackground: "#fff",
-    buttonBackground: brandColor,
-    buttonBorder: brandColor,
-    buttonText: theme.buttonText || "#fff",
-  }
+const html = (params: HtmlProps) => {
+  const { base_url, signin_url, email } = params
 
   return `
-<body style="background: ${color.background};">
-  <table width="100%" border="0" cellspacing="20" cellpadding="0"
-    style="background: ${color.mainBackground}; max-width: 600px; margin: auto; border-radius: 10px;">
-    <tr>
-      <td align="center"
-        style="padding: 10px 0px; font-size: 22px; font-family: Helvetica, Arial, sans-serif; color: ${color.text};">
-        Sign in to <strong>${escapedHost}</strong>
-      </td>
-    </tr>
-    <tr>
-      <td align="center" style="padding: 20px 0;">
-        <table border="0" cellspacing="0" cellpadding="0">
-          <tr>
-            <td align="center" style="border-radius: 5px;" bgcolor="${color.buttonBackground}"><a href="${url}"
-                target="_blank"
-                style="font-size: 18px; font-family: Helvetica, Arial, sans-serif; color: ${color.buttonText}; text-decoration: none; border-radius: 5px; padding: 10px 20px; border: 1px solid ${color.buttonBorder}; display: inline-block; font-weight: bold;">Sign
-                in</a></td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td align="center"
-        style="padding: 0px 0px 10px 0px; font-size: 16px; line-height: 22px; font-family: Helvetica, Arial, sans-serif; color: ${color.text};">
-        If you did not request this email you can safely ignore it.
-      </td>
-    </tr>
-  </table>
-</body>
-`
-}
+  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="supported-color-schemes" content="light dark" />
+    <title></title>
+    <style type="text/css" rel="stylesheet" media="all">
+      /* Base ------------------------------ */
+
+      @import url('https://fonts.googleapis.com/css?family=Inter:400,700&display=swap');
+      body {
+        width: 100% !important;
+        height: 100%;
+        margin: 0;
+        -webkit-text-size-adjust: none;
+      }
+
+      a {
+        color: #3b82f6;
+      }
+
+      a img {
+        border: none;
+      }
+
+      td {
+        word-break: break-word;
+      }
+
+      .preheader {
+        display: none !important;
+        visibility: hidden;
+        mso-hide: all;
+        font-size: 1px;
+        line-height: 1px;
+        max-height: 0;
+        max-width: 0;
+        opacity: 0;
+        overflow: hidden;
+      }
+      /* Type ------------------------------ */
+
+      body,
+      td,
+      th {
+        font-family: 'Inter', Helvetica, Arial, sans-serif;
+      }
+
+      h1 {
+        margin-top: 0;
+        color: #333333;
+        font-size: 22px;
+        font-weight: bold;
+        text-align: left;
+      }
+
+      h2 {
+        margin-top: 0;
+        color: #333333;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: left;
+      }
+
+      h3 {
+        margin-top: 0;
+        color: #333333;
+        font-size: 14px;
+        font-weight: bold;
+        text-align: left;
+      }
+
+      td,
+      th {
+        font-size: 16px;
+      }
+
+      p,
+      ul,
+      ol,
+      blockquote {
+        margin: 0.4em 0 1.1875em;
+        font-size: 16px;
+        line-height: 1.625;
+      }
+
+      p.sub {
+        font-size: 13px;
+      }
+      /* Utilities ------------------------------ */
+
+      .align-right {
+        text-align: right;
+      }
+
+      .align-left {
+        text-align: left;
+      }
+
+      .align-center {
+        text-align: center;
+      }
+      /* Buttons ------------------------------ */
+
+      .button {
+        background-color: #3b82f6;
+        border-top: 10px solid #3b82f6;
+        border-right: 18px solid #3b82f6;
+        border-bottom: 10px solid #3b82f6;
+        border-left: 18px solid #3b82f6;
+        display: inline-block;
+        color: #fff !important;
+        text-decoration: none;
+        border-radius: 0.375rem;
+        box-shadow: 0 2px 3px rgba(0, 0, 0, 0.16);
+        -webkit-text-size-adjust: none;
+        box-sizing: border-box;
+      }
+
+      @media only screen and (max-width: 500px) {
+        .button {
+          width: 100% !important;
+          text-align: center !important;
+        }
+      }
+      /* Attribute list ------------------------------ */
+
+      .attributes {
+        margin: 0 0 21px;
+      }
+
+      .attributes_content {
+        background-color: #f4f4f7;
+        padding: 16px;
+      }
+
+      .attributes_item {
+        padding: 0;
+      }
+      /* Related Items ------------------------------ */
+
+      .related {
+        width: 100%;
+        margin: 0;
+        padding: 25px 0 0 0;
+        -premailer-width: 100%;
+        -premailer-cellpadding: 0;
+        -premailer-cellspacing: 0;
+      }
+
+      .related_item {
+        padding: 10px 0;
+        color: #cbcccf;
+        font-size: 15px;
+        line-height: 18px;
+      }
+
+      .related_item-title {
+        display: block;
+        margin: 0.5em 0 0;
+      }
+
+      .related_item-thumb {
+        display: block;
+        padding-bottom: 10px;
+      }
+
+      .related_heading {
+        border-top: 1px solid #cbcccf;
+        text-align: center;
+        padding: 25px 0 10px;
+      }
+      /* Data table ------------------------------ */
+
+      body {
+        background-color: #f2f4f6;
+        color: #51545e;
+      }
+
+      p {
+        color: #51545e;
+      }
+
+      .email-wrapper {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        -premailer-width: 100%;
+        -premailer-cellpadding: 0;
+        -premailer-cellspacing: 0;
+        background-color: #f2f4f6;
+      }
+
+      .email-content {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        -premailer-width: 100%;
+        -premailer-cellpadding: 0;
+        -premailer-cellspacing: 0;
+      }
+      /* Masthead ----------------------- */
+
+      .email-masthead {
+        padding: 25px 0;
+        text-align: center;
+      }
+
+      .email-masthead_logo {
+        width: 94px;
+      }
+
+      .email-masthead_name {
+        font-size: 16px;
+        font-weight: bold;
+        color: #a8aaaf;
+        text-decoration: none;
+        text-shadow: 0 1px 0 white;
+      }
+      /* Body ------------------------------ */
+
+      .email-body {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        -premailer-width: 100%;
+        -premailer-cellpadding: 0;
+        -premailer-cellspacing: 0;
+      }
+
+      .email-body_inner {
+        width: 570px;
+        margin: 0 auto;
+        padding: 0;
+        -premailer-width: 570px;
+        -premailer-cellpadding: 0;
+        -premailer-cellspacing: 0;
+        background-color: #ffffff;
+      }
+
+      .email-footer {
+        width: 570px;
+        margin: 0 auto;
+        padding: 0;
+        -premailer-width: 570px;
+        -premailer-cellpadding: 0;
+        -premailer-cellspacing: 0;
+        text-align: center;
+      }
+
+      .email-footer p {
+        color: #a8aaaf;
+      }
+
+      .body-action {
+        width: 100%;
+        margin: 30px auto;
+        padding: 0;
+        -premailer-width: 100%;
+        -premailer-cellpadding: 0;
+        -premailer-cellspacing: 0;
+        text-align: center;
+      }
+
+      .body-sub {
+        margin-top: 25px;
+        padding-top: 25px;
+        border-top: 1px solid #eaeaec;
+      }
+
+      .content-cell {
+        padding: 45px;
+      }
+      /*Media Queries ------------------------------ */
+
+      @media only screen and (max-width: 600px) {
+        .email-body_inner,
+        .email-footer {
+          width: 100% !important;
+        }
+      }
+
+      @media (prefers-color-scheme: dark) {
+        body,
+        .email-body,
+        .email-body_inner,
+        .email-content,
+        .email-wrapper,
+        .email-masthead,
+        .email-footer {
+          background-color: #333333 !important;
+          color: #fff !important;
+        }
+        p,
+        ul,
+        ol,
+        blockquote,
+        h1,
+        h2,
+        h3,
+        span,
+        .purchase_item {
+          color: #fff !important;
+        }
+        .attributes_content {
+          background-color: #222 !important;
+        }
+        .email-masthead_name {
+          text-shadow: none !important;
+        }
+      }
+
+      :root {
+        color-scheme: light dark;
+        supported-color-schemes: light dark;
+      }
+    </style>
+    <!--[if mso]>
+      <style type="text/css">
+        .f-fallback {
+          font-family: Arial, sans-serif;
+        }
+      </style>
+    <![endif]-->
+  </head>
+  <body>
+    <span class="preheader">This link will expire in 10 min.</span>
+    <table
+      class="email-wrapper"
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      role="presentation"
+    >
+      <tr>
+        <td align="center">
+          <table
+            class="email-content"
+            width="100%"
+            cellpadding="0"
+            cellspacing="0"
+            role="presentation"
+          >
+            <tr>
+              <td class="email-masthead">
+                <a href="${base_url}" class="f-fallback email-masthead_name">
+                  ⚡ Magic NextAuth
+                </a>
+              </td>
+            </tr>
+            <!-- Email Body -->
+            <tr>
+              <td
+                class="email-body"
+                width="570"
+                cellpadding="0"
+                cellspacing="0"
+              >
+                <table
+                  class="email-body_inner"
+                  align="center"
+                  width="570"
+                  cellpadding="0"
+                  cellspacing="0"
+                  role="presentation"
+                >
+                  <!-- Body content -->
+                  <tr>
+                    <td class="content-cell">
+                      <div class="f-fallback">
+                        <p>
+                          Click the button below to log in to Magic NextAuth.<br />
+                          This button will expire in 10 minutes.
+                        </p>
+                        <!-- Action -->
+                        <table
+                          class="body-action"
+                          align="center"
+                          width="100%"
+                          cellpadding="0"
+                          cellspacing="0"
+                          role="presentation"
+                        >
+                          <tr>
+                            <td align="center">
+                              <!-- Border based button
+           https://litmus.com/blog/a-guide-to-bulletproof-buttons-in-email-design -->
+                              <table
+                                width="100%"
+                                border="0"
+                                cellspacing="0"
+                                cellpadding="0"
+                                role="presentation"
+                              >
+                                <tr>
+                                  <td>
+                                    <a
+                                      href="${signin_url}"
+                                      class="f-fallback button"
+                                      target="_blank"
+                                      >Login to Magic NextAuth</a
+                                    >
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                        </table>
+                        <p>
+                          Confirming this request will securely log you in using
+                          ${email}.
+                        </p>
+                        <p>Best,<br />The Magic NextAuth Team</p>
+                        <!-- Sub copy -->
+                        <table class="body-sub" role="presentation">
+                          <tr>
+                            <td>
+                              <p class="f-fallback sub">
+                                If you’re having trouble with the button above,
+                                copy and paste the URL below into your web
+                                browser.
+                              </p>
+                              <p class="f-fallback sub">${signin_url}</p>
+                            </td>
+                          </tr>
+                        </table>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <table
+                  class="email-footer"
+                  align="center"
+                  width="570"
+                  cellpadding="0"
+                  cellspacing="0"
+                  role="presentation"
+                >
+                  <tr>
+                    <td class="content-cell" align="center">
+                      <p class="f-fallback sub align-center">
+                        &copy; 2021 Magic NextAuth. All rights reserved.
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+  `
+};
 
 function text({ url, host }: { url: string; host: string }) {
-  return `Sign in to ${host}\n${url}\n\n`
+  return `Sign in to ${host}\n${url}\n\n`;
 }
 
 declare module "next-auth" {
@@ -100,10 +519,10 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  **/
 export const authOptions: NextAuthOptions = {
-  // pages: {
-  //   signIn: '/auth/signin',
-  //   signOut: '/',
-  // },
+  pages: {
+    signIn: '/auth/signin',
+    signOut: '/',
+  },
   callbacks: {
     session({ session, user }) {
       if (session.user) {
@@ -128,22 +547,25 @@ export const authOptions: NextAuthOptions = {
       from: env.EMAIL_FROM,
       maxAge: 10 * 60, // Magic links are valid for 10 min only
       async sendVerificationRequest(params) {
-        const { identifier, url, provider, theme } = params
-        console.log({ identifier, url, provider, theme });
-        const { host } = new URL(url)
-        console.log({ host });
+        const { identifier, url, provider } = params;
+        const { host } = new URL(url);
         // NOTE: You are not required to use `nodemailer`, use whatever you want.
-        const transport = createTransport(provider.server)
+        const transport = createTransport(provider.server);
         const result = await transport.sendMail({
           to: identifier,
           from: provider.from,
           subject: `Sign in to ${host}`,
           text: text({ url, host }),
-          html: html({ url, host, theme }),
-        })
-        const failed = result.rejected.concat(result.pending).filter(Boolean)
+          // html: html({ url, host, theme }),
+          html: html({
+            base_url: env.NEXTAUTH_URL,
+            signin_url: url,
+            email: identifier,
+          })
+        });
+        const failed = result.rejected.concat(result.pending).filter(Boolean);
         if (failed.length) {
-          throw new Error(`Email(s) (${failed.join(", ")}) could not be sent`)
+          throw new Error(`Email(s) (${failed.join(", ")}) could not be sent`);
         }
       },
     }),
@@ -160,12 +582,10 @@ export const authOptions: NextAuthOptions = {
           email: profile.email,
           // username,
         };
-
       },
     }),
   ],
   secret: env.NEXTAUTH_SECRET,
-
 };
 
 /**
@@ -180,6 +600,3 @@ export const getServerAuthSession = (ctx: {
 }) => {
   return getServerSession(ctx.req, ctx.res, authOptions);
 };
-
-
-
