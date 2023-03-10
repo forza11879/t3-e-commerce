@@ -1,4 +1,5 @@
 import type { GetServerSidePropsContext } from "next";
+import { z } from 'zod';
 import {
   getServerSession,
   type NextAuthOptions,
@@ -11,6 +12,12 @@ import { createTransport } from "nodemailer";
 
 import { env } from "../env.mjs";
 import { prisma } from "./db";
+import type { UserWithRelations } from '../../prisma/generated/zod/modelSchema/UserSchema'
+// import type { User } from "@prisma/client";
+
+import type { RouterOutputs } from "../../src/utils/api"
+
+// type UserOutput = RouterOutputs['example']['getAllUsers']
 
 interface Profile {
   sub: string;
@@ -24,6 +31,23 @@ interface HtmlProps {
   signin_url: string;
   email: string;
 }
+
+interface User {
+  user: UserWithRelations;
+}
+
+const transporter = createTransport({
+  host: env.EMAIL_SERVER_HOST,
+  port: 465,
+  auth: {
+    user: env.EMAIL_SERVER_USER,
+    pass: env.EMAIL_SERVER_PASSWORD,
+  },
+  secure: true,
+});
+
+
+
 
 const html = (params: HtmlProps) => {
   const { base_url, signin_url, email } = params
@@ -496,6 +520,36 @@ const html = (params: HtmlProps) => {
 function text({ url, host }: { url: string; host: string }) {
   return `Sign in to ${host}\n${url}\n\n`;
 }
+const sendWelcomeEmail = async <T>(message: T) => {
+  try {
+    console.log("messageee: ", message);
+    console.log("typeof messageeee: ", typeof message);
+    const result = await transporter.sendMail({
+      from: `"⚡ Magic NextAuth" ${env.EMAIL_FROM}`,
+      to: message.user.email,
+      subject: 'Welcome to Magic NextAuth! 🎉',
+      // html: emailTemplate({
+      //   base_url: env.NEXTAUTH_URL,
+      //   support_email: 'support@example.com',
+      // }),
+      html: `<div>HELLO</div>`
+    }
+      // , (err, info) => {
+      //   // console.log(info.envelope);
+      //   // console.log(info.messageId);
+      //   console.log(info);
+      //   console.log(err);
+      // }
+    );
+    const failed = result.rejected.concat(result.pending).filter(Boolean);
+    if (failed.length) {
+      throw new Error(`Email(s) (${failed.join(", ")}) could not be sent`);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
+}
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
@@ -546,12 +600,12 @@ export const authOptions: NextAuthOptions = {
       server: env.EMAIL_SERVER,
       from: env.EMAIL_FROM,
       maxAge: 10 * 60, // Magic links are valid for 10 min only
-      async sendVerificationRequest(params) {
+      sendVerificationRequest(params) {
         const { identifier, url, provider } = params;
         const { host } = new URL(url);
         // NOTE: You are not required to use `nodemailer`, use whatever you want.
-        const transport = createTransport(provider.server);
-        const result = await transport.sendMail({
+        // const transport = createTransport(provider.server);
+        transporter.sendMail({
           to: identifier,
           from: provider.from,
           subject: `Sign in to ${host}`,
@@ -562,11 +616,16 @@ export const authOptions: NextAuthOptions = {
             signin_url: url,
             email: identifier,
           })
+        }, (err, info) => {
+          // console.log(info.envelope);
+          // console.log(info.messageId);
+          console.log(info);
+          console.log(err);
+          const failed = info.rejected.concat(info.pending).filter(Boolean);
+          if (failed.length) {
+            throw new Error(`Email(s) (${failed.join(", ")}) could not be sent`);
+          }
         });
-        const failed = result.rejected.concat(result.pending).filter(Boolean);
-        if (failed.length) {
-          throw new Error(`Email(s) (${failed.join(", ")}) could not be sent`);
-        }
       },
     }),
     GoogleProvider({
@@ -585,6 +644,11 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  events: {
+    createUser: async (message) => {
+      await sendWelcomeEmail<typeof message>(message)
+    },
+  },
   secret: env.NEXTAUTH_SECRET,
 };
 
@@ -600,3 +664,10 @@ export const getServerAuthSession = (ctx: {
 }) => {
   return getServerSession(ctx.req, ctx.res, authOptions);
 };
+
+
+
+
+
+
+
