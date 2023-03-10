@@ -4,6 +4,8 @@ import {
   getServerSession,
   type NextAuthOptions,
   type DefaultSession,
+  type DefaultUser,
+  type User
 } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import EmailProvider from "next-auth/providers/email";
@@ -32,9 +34,9 @@ interface HtmlProps {
   email: string;
 }
 
-interface User {
-  user: UserWithRelations;
-}
+// interface User {
+//   user: UserWithRelations;
+// }
 
 const transporter = createTransport({
   host: env.EMAIL_SERVER_HOST,
@@ -520,7 +522,7 @@ const html = (params: HtmlProps) => {
 function text({ url, host }: { url: string; host: string }) {
   return `Sign in to ${host}\n${url}\n\n`;
 }
-const sendWelcomeEmail = async <T>(message: T) => {
+const sendWelcomeEmail = async <T extends { user: User }>(message: T) => {
   try {
     console.log("messageee: ", message);
     console.log("typeof messageeee: ", typeof message);
@@ -541,10 +543,10 @@ const sendWelcomeEmail = async <T>(message: T) => {
       //   console.log(err);
       // }
     );
-    const failed = result.rejected.concat(result.pending).filter(Boolean);
-    if (failed.length) {
-      throw new Error(`Email(s) (${failed.join(", ")}) could not be sent`);
-    }
+    // const failed = result.rejected.concat(result.pending).filter(Boolean);
+    // if (failed.length) {
+    //   throw new Error(`Email(s) (${failed.join(", ")}) could not be sent`);
+    // }
   } catch (error) {
     console.log(error);
   }
