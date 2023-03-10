@@ -9,7 +9,7 @@ import { type SessionWithRelations, SessionWithRelationsSchema } from './Session
 export const UserSchema = z.object({
   id: z.string().cuid(),
   name: z.string().nullable(),
-  email: z.string().optional(),
+  email: z.string().nullable(),
   emailVerified: z.date().nullable(),
   image: z.string().nullable(),
 })
