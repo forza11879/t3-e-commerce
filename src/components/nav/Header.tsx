@@ -21,21 +21,37 @@ const Header: React.FC = () => {
   const router = useRouter();
 
   const authenticated = status === "authenticated";
+  const unauthenticated = status === "unauthenticated";
+
   const email = session?.user.email || null;
 
   const clickEventHandler = async () => {
-    await router.push(`/auth/signin`);
+    // await router.push(`/auth/signin`);
     await signOut();
   };
+
+
 
 
   const clickHandler = () => {
     return void clickEventHandler();
   };
 
+  const clickEventHandlerPush = async (unauthenticated: boolean) => {
+    console.log({ unauthenticated });
+    try {
+
+      if (unauthenticated && window.location.href !== 'http://localhost:3000/auth/signin')
+        await router.push(`/auth/signin`);
+
+    } catch (error) {
+      console.log({ error });
+    }
+  }
+
   const items: MenuProps["items"] = [
     {
-      label: <Link href="/">Home</Link>,
+      label: authenticated ? <Link href="/">Home</Link> : void clickEventHandlerPush(unauthenticated),
       key: "home",
       icon: <AppstoreOutlined />,
     },
