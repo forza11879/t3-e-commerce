@@ -1041,17 +1041,12 @@ export const authOptions: NextAuthOptions = {
           from: provider.from,
           subject: `Sign in to ${host}`,
           text: text({ url, host }),
-          // html: html({ url, host, theme }),
           html: html({
             base_url: env.NEXTAUTH_URL,
             signin_url: url,
             email: identifier,
           })
         }, (err, info) => {
-          // console.log(info.envelope);
-          // console.log(info.messageId);
-          // console.log(info);
-          // console.log(err);
           const failed = info.rejected.concat(info.pending).filter(Boolean);
           if (failed.length) {
             throw new Error(`Email(s) (${failed.join(", ")}) could not be sent`);

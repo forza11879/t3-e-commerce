@@ -1,38 +1,38 @@
 import React, { useState, useEffect } from "react";
 import { signIn, getSession } from "next-auth/react";
+import { useRouter } from 'next/router';
+import { Button, Modal } from "antd";
 
 // import getConfig from "next/config";
 // import { toast } from "react-toastify";
 // import { useSelector } from "react-redux";
-import { useRouter } from "next/router";
 // import { auth } from "@/lib/firebase.js";
 // import { selectUser } from "@/store/user.js";
 
 function RegisterPage() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("forza11879@gmail.com");
+  // const [showModal, setShowModal] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [disabled, setDisabled] = useState(false);
 
   const router = useRouter();
-  // const user = useSelector(selectUser);
 
-  // useEffect(() => {
-  //   if (user && user.token) router.push(`/`);
-  // }, [user]);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
 
-  const handleSubmit = (e: React.SyntheticEvent) => {
-    e.preventDefault();
-    // const config = {
-    //   url: process.env.registerRedirectUrl, // e-mail link send to the client e-mail to complete the registration
-    //   handleCodeInApp: true,
-    // };
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
 
-    // await auth.sendSignInLinkToEmail(email, config);
-    // toast.success(
-    //   `Email is sent to ${email}. Click the link to complete your registration.`
-    // );
-    // save user email in local storage to complete the registration when the client receives the email in the inbox
-    window.localStorage.setItem("emailForRegistration", email);
-    // clear state
-    setEmail("");
+  const clickEventHandler = async () => {
+    setIsModalOpen(false);
+    await router.push(`/`);
+  };
+
+  const handleCancel = () => {
+    return void clickEventHandler();
   };
 
   const handleSignIn = async (e: React.SyntheticEvent): Promise<void> => {
@@ -40,7 +40,7 @@ function RegisterPage() {
     // let toastId;
     try {
       // toastId = toast.loading('Loading...');
-      // setDisabled(true);
+      setDisabled(true);
       // Perform sign in
       const signInResponse = await signIn("email", {
         email,
@@ -48,19 +48,25 @@ function RegisterPage() {
         // callbackUrl: "/",
         callbackUrl: `${window.location.origin}/auth/confirm-request`,
       });
+      console.log("signInResponseee: ", signInResponse);
+
       // Something went wrong
       if (signInResponse?.error) {
         throw new Error(signInResponse?.error);
       }
       // setShowModal(true);
+      showModal();
+
+
+      // setEmail("");
+      // console.log({ showModal });
       // toast.success('Magic link successfully sent', { id: toastId });
     } catch (error) {
       console.log(error);
       // toast.error('Unable to send magic link', { id: toastId });
+    } finally {
+      setDisabled(false);
     }
-    //  finally {
-    //   // setDisabled(false);
-    // }
   };
 
   const registerForm = () => (
@@ -72,11 +78,12 @@ function RegisterPage() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="Your email"
+        disabled={disabled}
         autoFocus
       />
       <br />
-      <button type="submit" className="btn btn-raised">
-        Register
+      <button type="submit" className="btn btn-raised" disabled={disabled}>
+        {disabled ? "Loading..." : "Sign in"}
       </button>
     </form>
   );
@@ -86,6 +93,27 @@ function RegisterPage() {
         <div className="col-md-6 offset-md-3">
           <h4>Register</h4>
           {registerForm()}
+          <Modal
+            title="Basic Modal"
+            open={isModalOpen}
+            onOk={handleOk}
+            onCancel={handleCancel}
+          >
+            <div className="fixed inset-0 z-10 bg-white bg-opacity-90 backdrop-blur-md backdrop-grayscale backdrop-filter">
+              <div className="animate-zoomIn flex min-h-screen flex-col items-center justify-center px-6">
+                <div className="flex max-w-sm flex-col items-center justify-center text-center">
+                  {/* <MailOpenIcon className="h-12 w-12 flex-shrink-0 text-blue-500" /> */}
+                  <h3 className="mt-2 text-2xl font-semibold">
+                    Confirm your email
+                  </h3>
+                  <p className="mt-4 text-lg">
+                    We emailed a magic link to <strong>{email}</strong>. Check
+                    your inbox and click the link in the email to login.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Modal>
         </div>
       </div>
     </div>
