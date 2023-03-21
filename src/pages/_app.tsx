@@ -12,7 +12,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
-  // console.log("EMAIL_SERVER_PORT:", typeof process.env.EMAIL_SERVER_PORT);
+  console.log("EMAIL_SERVER_PORT:", typeof process.env.EMAIL_SERVER_PORT);
 
   return (
     <SessionProvider session={session}>
