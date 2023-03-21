@@ -22,6 +22,7 @@ const Header: React.FC = () => {
 
   const authenticated = status === "authenticated";
   const unauthenticated = status === "unauthenticated";
+  const signinWindow = typeof window !== "undefined" && window?.location.href === 'http://localhost:3000/auth/signin'
 
   const email = session?.user.email || null;
 
@@ -37,11 +38,11 @@ const Header: React.FC = () => {
     return void clickEventHandler();
   };
 
-  const clickEventHandlerPush = async (unauthenticated: boolean) => {
+  const clickEventHandlerPush = async (unauthenticated: boolean, signinWindow: boolean) => {
     console.log({ unauthenticated });
     try {
 
-      if (unauthenticated && window.location.href !== 'http://localhost:3000/auth/signin')
+      if (unauthenticated && !Boolean(signinWindow))
         await router.push(`/auth/signin`);
 
     } catch (error) {
@@ -51,7 +52,7 @@ const Header: React.FC = () => {
 
   const items: MenuProps["items"] = [
     {
-      label: authenticated ? <Link href="/">Home</Link> : void clickEventHandlerPush(unauthenticated),
+      label: authenticated ? <Link href="/">Home</Link> : void clickEventHandlerPush(unauthenticated, signinWindow),
       key: "home",
       icon: <AppstoreOutlined />,
     },
@@ -71,9 +72,9 @@ const Header: React.FC = () => {
     },
     {
       label: authenticated ? email?.split('@')[0] :
-        <Link href="/auth/signin">Log in</Link>,
+        signinWindow ? null : <Link href="/auth/signin">Log in</Link>,
       key: "SubMenu",
-      icon: authenticated ? <SettingOutlined /> : <LoginOutlined />,
+      icon: authenticated ? <SettingOutlined /> : signinWindow ? null : <LoginOutlined />,
       children: authenticated ? [
         {
           label: <Link href="/register">Register</Link>,
