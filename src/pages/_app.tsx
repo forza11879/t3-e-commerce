@@ -2,6 +2,10 @@ import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { env } from "../env.mjs";
+import { ToastContainer } from 'react-toastify';
+// import nProgress from 'nprogress';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 import { api } from "../utils/api";
 import Header from "@/components/nav/Header";
@@ -17,6 +21,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
       <Header />
+      <ToastContainer />
       <Component {...pageProps} />
     </SessionProvider>
   );

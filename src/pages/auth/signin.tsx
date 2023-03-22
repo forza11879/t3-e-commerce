@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from "react";
+import * as z from 'zod';
+import { fromZodError } from 'zod-validation-error'
 import { signIn, getSession } from "next-auth/react";
 import { useRouter } from 'next/router';
 import { Button, Modal } from "antd";
-
-// import getConfig from "next/config";
-// import { toast } from "react-toastify";
-// import { useSelector } from "react-redux";
-// import { auth } from "@/lib/firebase.js";
-// import { selectUser } from "@/store/user.js";
+import { api } from "../../utils/api";
+import { toast } from 'react-toastify';
 
 function RegisterPage() {
-  const [email, setEmail] = useState("forza11879@gmail.com");
-  // const [showModal, setShowModal] = useState(false);
+  const [email, setEmail] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [disabled, setDisabled] = useState(false);
 
   const router = useRouter();
+
+  const emailSchema = z.string().email();
+  const validationResult = emailSchema.safeParse(email);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -37,33 +37,25 @@ function RegisterPage() {
 
   const handleSignIn = async (e: React.SyntheticEvent): Promise<void> => {
     e.preventDefault();
-    // let toastId;
     try {
-      // toastId = toast.loading('Loading...');
       setDisabled(true);
       // Perform sign in
       const signInResponse = await signIn("email", {
-        email,
+        email: validationResult.success ? validationResult.data : null,
         redirect: false,
-        // callbackUrl: "/",
         callbackUrl: `${window.location.origin}/auth/confirm-request`,
       });
-      console.log("signInResponseee: ", signInResponse);
 
       // Something went wrong
       if (signInResponse?.error) {
         throw new Error(signInResponse?.error);
       }
-      // setShowModal(true);
       showModal();
-
-
-      // setEmail("");
-      // console.log({ showModal });
-      // toast.success('Magic link successfully sent', { id: toastId });
     } catch (error) {
       console.log(error);
-      // toast.error('Unable to send magic link', { id: toastId });
+      if (!validationResult.success) {
+        validationResult.error.errors.map(error => toast.error(error.message))
+      }
     } finally {
       setDisabled(false);
     }
