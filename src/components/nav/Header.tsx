@@ -19,6 +19,7 @@ const Header: React.FC = () => {
   const [current, setCurrent] = useState("home");
   const { data: session, status } = useSession();
   const router = useRouter();
+  console.log({ session, status });
 
   const authenticated = status === "authenticated";
   const unauthenticated = status === "unauthenticated";
@@ -39,7 +40,7 @@ const Header: React.FC = () => {
   };
 
   const clickEventHandlerPush = async (unauthenticated: boolean, signinWindow: boolean) => {
-    console.log({ unauthenticated });
+    // console.log({ unauthenticated });
     try {
 
       if (unauthenticated && !Boolean(signinWindow))

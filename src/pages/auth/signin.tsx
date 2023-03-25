@@ -1,19 +1,29 @@
 import React, { useState, useEffect } from "react";
 import * as z from 'zod';
-import { fromZodError } from 'zod-validation-error'
-import { signIn, getSession } from "next-auth/react";
+import { signIn, getSession, useSession } from "next-auth/react";
 import { useRouter } from 'next/router';
-import { Button, Modal } from "antd";
-import { api } from "../../utils/api";
+import { Modal } from "antd";
 import { toast } from 'react-toastify';
 
 function RegisterPage() {
-  const [email, setEmail] = useState("");
+  const { data: session, status } = useSession();
+  const [email, setEmail] = useState("john.leahu@gmail.c");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [disabled, setDisabled] = useState(false);
 
   const router = useRouter();
+
+  const authenticated = status === "authenticated";
+
+
+  useEffect(() => {
+    async function fetchData(): Promise<void> {
+      if (authenticated) await router.push('/')
+    }
+    void fetchData();
+  }, [authenticated])
+
 
   const emailSchema = z.string().email();
   const validationResult = emailSchema.safeParse(email);
@@ -74,10 +84,11 @@ function RegisterPage() {
         autoFocus
       />
       <br />
-      <button type="submit" className="btn btn-raised" disabled={disabled}>
+      <button type="submit" className="btn btn-raised"
+        disabled={!validationResult.success || disabled}>
         {disabled ? "Loading..." : "Sign in"}
       </button>
-    </form>
+    </form >
   );
   return (
     <div className="container p-5">

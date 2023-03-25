@@ -80,6 +80,7 @@ export { SessionCountOrderByAggregateInputSchema } from './SessionCountOrderByAg
 export { SessionMaxOrderByAggregateInputSchema } from './SessionMaxOrderByAggregateInputSchema';
 export { SessionMinOrderByAggregateInputSchema } from './SessionMinOrderByAggregateInputSchema';
 export { DateTimeNullableFilterSchema } from './DateTimeNullableFilterSchema';
+export { EnumRoleFilterSchema } from './EnumRoleFilterSchema';
 export { AccountListRelationFilterSchema } from './AccountListRelationFilterSchema';
 export { SessionListRelationFilterSchema } from './SessionListRelationFilterSchema';
 export { AccountOrderByRelationAggregateInputSchema } from './AccountOrderByRelationAggregateInputSchema';
@@ -88,6 +89,7 @@ export { UserCountOrderByAggregateInputSchema } from './UserCountOrderByAggregat
 export { UserMaxOrderByAggregateInputSchema } from './UserMaxOrderByAggregateInputSchema';
 export { UserMinOrderByAggregateInputSchema } from './UserMinOrderByAggregateInputSchema';
 export { DateTimeNullableWithAggregatesFilterSchema } from './DateTimeNullableWithAggregatesFilterSchema';
+export { EnumRoleWithAggregatesFilterSchema } from './EnumRoleWithAggregatesFilterSchema';
 export { VerificationTokenIdentifierTokenCompoundUniqueInputSchema } from './VerificationTokenIdentifierTokenCompoundUniqueInputSchema';
 export { VerificationTokenCountOrderByAggregateInputSchema } from './VerificationTokenCountOrderByAggregateInputSchema';
 export { VerificationTokenMaxOrderByAggregateInputSchema } from './VerificationTokenMaxOrderByAggregateInputSchema';
@@ -105,6 +107,7 @@ export { SessionCreateNestedManyWithoutUserInputSchema } from './SessionCreateNe
 export { AccountUncheckedCreateNestedManyWithoutUserInputSchema } from './AccountUncheckedCreateNestedManyWithoutUserInputSchema';
 export { SessionUncheckedCreateNestedManyWithoutUserInputSchema } from './SessionUncheckedCreateNestedManyWithoutUserInputSchema';
 export { NullableDateTimeFieldUpdateOperationsInputSchema } from './NullableDateTimeFieldUpdateOperationsInputSchema';
+export { EnumRoleFieldUpdateOperationsInputSchema } from './EnumRoleFieldUpdateOperationsInputSchema';
 export { AccountUpdateManyWithoutUserNestedInputSchema } from './AccountUpdateManyWithoutUserNestedInputSchema';
 export { SessionUpdateManyWithoutUserNestedInputSchema } from './SessionUpdateManyWithoutUserNestedInputSchema';
 export { AccountUncheckedUpdateManyWithoutUserNestedInputSchema } from './AccountUncheckedUpdateManyWithoutUserNestedInputSchema';
@@ -120,7 +123,9 @@ export { NestedStringNullableWithAggregatesFilterSchema } from './NestedStringNu
 export { NestedIntNullableWithAggregatesFilterSchema } from './NestedIntNullableWithAggregatesFilterSchema';
 export { NestedFloatNullableFilterSchema } from './NestedFloatNullableFilterSchema';
 export { NestedDateTimeNullableFilterSchema } from './NestedDateTimeNullableFilterSchema';
+export { NestedEnumRoleFilterSchema } from './NestedEnumRoleFilterSchema';
 export { NestedDateTimeNullableWithAggregatesFilterSchema } from './NestedDateTimeNullableWithAggregatesFilterSchema';
+export { NestedEnumRoleWithAggregatesFilterSchema } from './NestedEnumRoleWithAggregatesFilterSchema';
 export { UserCreateWithoutAccountsInputSchema } from './UserCreateWithoutAccountsInputSchema';
 export { UserUncheckedCreateWithoutAccountsInputSchema } from './UserUncheckedCreateWithoutAccountsInputSchema';
 export { UserCreateOrConnectWithoutAccountsInputSchema } from './UserCreateOrConnectWithoutAccountsInputSchema';
@@ -164,3 +169,4 @@ export { SortOrderSchema } from './SortOrderSchema';
 export { TransactionIsolationLevelSchema } from './TransactionIsolationLevelSchema';
 export { UserScalarFieldEnumSchema } from './UserScalarFieldEnumSchema';
 export { VerificationTokenScalarFieldEnumSchema } from './VerificationTokenScalarFieldEnumSchema';
+export { RoleSchema } from './RoleSchema';

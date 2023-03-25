@@ -3,9 +3,9 @@ import {
   getServerSession,
   type NextAuthOptions,
   type DefaultSession,
-  type User
+  type User as NextAuthUser,
 } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
+// import GoogleProvider from "next-auth/providers/google";
 import EmailProvider from "next-auth/providers/email";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { createTransport } from "nodemailer";
@@ -13,15 +13,16 @@ import { createTransport } from "nodemailer";
 import { env } from "../env.mjs";
 import { prisma } from "./db";
 
-import type { RouterOutputs } from "../../src/utils/api"
+// import type { RouterOutputs } from "../../src/utils/api"
 
 
-interface Profile {
-  sub: string;
-  name: string;
-  picture: string;
-  email: string;
-}
+// interface Profile {
+//   sub: string;
+//   name: string;
+//   picture: string;
+//   email: string;
+//   // role: string;
+// }
 
 interface HtmlProps {
   base_url: string;
@@ -34,10 +35,6 @@ interface HtmlPropsWelcome {
   support_email: string;
 }
 
-// interface User {
-//   user: UserWithRelations;
-// }
-
 const transporter = createTransport({
   host: env.EMAIL_SERVER_HOST,
   port: 465,
@@ -47,9 +44,6 @@ const transporter = createTransport({
   },
   secure: true,
 });
-
-
-
 
 const html = (params: HtmlProps) => {
   const { base_url, signin_url, email } = params
@@ -959,7 +953,7 @@ const isString = (value: unknown): value is string => {
   return typeof value === 'string';
 };
 
-const sendWelcomeEmail = async <T extends { user: User }>(message: T) => {
+const sendWelcomeEmail = async <T extends { user: NextAuthUser }>(message: T) => {
   try {
     if (message.user.email && isString(message.user.email)) {
       const result = await transporter.sendMail({
@@ -987,14 +981,16 @@ declare module "next-auth" {
     user: {
       id: string;
       // ...other properties
-      // role: UserRole;
+      role: UserRole;
     } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    // ...other properties
+    role: UserRole;
+  }
+
+  enum UserRole { ADMIN = 'ADMIN', USER = 'USER' }
 }
 
 /**
@@ -1012,7 +1008,11 @@ export const authOptions: NextAuthOptions = {
     session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;
-        // session.user.role = user.role; <-- put other properties on the session here
+        // console.log({ session, user });
+        session.user.role = user.role
+        // console.log({ session, user });
+
+        // <-- put other properties on the session here
       }
       return session;
     },
@@ -1054,21 +1054,22 @@ export const authOptions: NextAuthOptions = {
         });
       },
     }),
-    GoogleProvider({
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
-      profile(profile: Profile) {
-        // const givenName = profile.given_name ?? "" + profile.family_name ?? "";
-        // const username = getUsername(givenName);
-        return {
-          id: profile.sub,
-          image: profile.picture,
-          name: profile.name,
-          email: profile.email,
-          // username,
-        };
-      },
-    }),
+    // GoogleProvider({
+    //   clientId: env.GOOGLE_CLIENT_ID,
+    //   clientSecret: env.GOOGLE_CLIENT_SECRET,
+    //   profile(profile: Profile) {
+    //     // const givenName = profile.given_name ?? "" + profile.family_name ?? "";
+    //     // const username = getUsername(givenName);
+    //     return {
+    //       id: profile.sub,
+    //       image: profile.picture,
+    //       name: profile.name,
+    //       email: profile.email,
+    //       // role: profile.role,
+    //       // username,
+    //     };
+    //   },
+    // }),
   ],
   events: {
     createUser: async (message) => {

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { RoleSchema } from '../inputTypeSchemas/RoleSchema'
 import { type AccountWithRelations, AccountWithRelationsSchema } from './AccountSchema'
 import { type SessionWithRelations, SessionWithRelationsSchema } from './SessionSchema'
 
@@ -7,6 +8,7 @@ import { type SessionWithRelations, SessionWithRelationsSchema } from './Session
 /////////////////////////////////////////
 
 export const UserSchema = z.object({
+  role: RoleSchema,
   id: z.string().cuid(),
   name: z.string().nullable(),
   email: z.string().nullable(),
