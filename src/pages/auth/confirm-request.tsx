@@ -1,16 +1,31 @@
+import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 
 const ConfirmRequest = () => {
   const { data: session, status } = useSession();
-  const loading = status === "loading";
 
   const router = useRouter();
 
-  if (!loading && !session) {
-    router.push("/auth/signin").catch((error) => console.log(error));
-  }
+  const loading = status === "loading";
+  const authenticated = status === "authenticated";
+  // const userRole = session?.user.role === "USER"
+  const adminRole = session?.user.role === "ADMIN"
+
+  useEffect(() => {
+    if (!loading && !session) {
+      router.push("/auth/signin").catch((error) => console.log(error));
+    }
+
+    if (authenticated && adminRole) {
+      router.push('/admin/dashboard').catch((error) => console.log(error));
+    }
+  }, [authenticated, adminRole])
+
+
+
+
 
   return (
     <>

@@ -14,12 +14,16 @@ function RegisterPage() {
 
   const router = useRouter();
 
-  const authenticated = status === "authenticated";
+  // console.log({ session, status });
+  console.log("session?.user: ", session?.user.role);
 
+  const authenticated = status === "authenticated";
+  const userRole = session?.user.role === "USER"
+  const adminRole = session?.user.role === "ADMIN"
 
   useEffect(() => {
     async function fetchData(): Promise<void> {
-      if (authenticated) await router.push('/')
+      if (authenticated && adminRole) await router.push('/admin/dashboard')
     }
     void fetchData();
   }, [authenticated])

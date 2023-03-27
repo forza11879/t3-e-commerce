@@ -19,7 +19,7 @@ const Header: React.FC = () => {
   const [current, setCurrent] = useState("home");
   const { data: session, status } = useSession();
   const router = useRouter();
-  console.log({ session, status });
+  // console.log({ session, status });
 
   const authenticated = status === "authenticated";
   const unauthenticated = status === "unauthenticated";
