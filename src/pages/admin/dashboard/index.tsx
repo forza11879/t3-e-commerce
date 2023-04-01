@@ -1,3 +1,8 @@
+import React, { useEffect } from "react";
+import { type NextPage } from "next";
+import { useSession } from "next-auth/react";
+import { useRouter } from 'next/router';
+
 // import AdminRoute from '@/components/lib/AdminRoute';
 // import AdminNav from '@/components/nav/AdminNav';
 // import nookies from 'nookies';
@@ -14,7 +19,19 @@
 // } from '@/hooks/query/order';
 
 // const AdminDashBoard = ({ token, isAdmin, userId }) => {
-const AdminDashBoard = () => {
+const AdminDashBoardPage: NextPage = () => {
+
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+
+  const authenticated = status === "authenticated";
+  const userRole = session?.user.role === "USER";
+  // const adminRole = session?.user.role === "ADMIN";
+
+  useEffect(() => {
+    if (authenticated && userRole) void router.push('/')
+  }, [authenticated, userRole, router])
 
   // const userOrdersUseQuery = useQueryUserOrders(userId, token);
   // const updateOrderStatusUseMutation = useMutationUpdateOrderStatus();
@@ -96,4 +113,4 @@ const AdminDashBoard = () => {
 //   }
 // }
 
-export default AdminDashBoard;
+export default AdminDashBoardPage;

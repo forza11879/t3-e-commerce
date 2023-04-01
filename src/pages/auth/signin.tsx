@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { type NextPage } from "next";
 import * as z from 'zod';
 import { signIn, getSession, useSession } from "next-auth/react";
 import { useRouter } from 'next/router';
 import { Modal } from "antd";
 import { toast } from 'react-toastify';
 
-function RegisterPage() {
+const RegisterPage: NextPage = () => {
   const { data: session, status } = useSession();
   const [email, setEmail] = useState("john.leahu@gmail.c");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,15 +19,11 @@ function RegisterPage() {
   console.log("session?.user: ", session?.user.role);
 
   const authenticated = status === "authenticated";
-  const userRole = session?.user.role === "USER"
   const adminRole = session?.user.role === "ADMIN"
 
   useEffect(() => {
-    async function fetchData(): Promise<void> {
-      if (authenticated && adminRole) await router.push('/admin/dashboard')
-    }
-    void fetchData();
-  }, [authenticated])
+    if (authenticated && adminRole) void router.push('/admin/dashboard')
+  }, [authenticated, adminRole, router])
 
 
   const emailSchema = z.string().email();

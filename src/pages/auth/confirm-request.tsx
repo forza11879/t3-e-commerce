@@ -1,9 +1,10 @@
 import { useEffect } from "react";
+import { type NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 
-const ConfirmRequest = () => {
+const ConfirmRequestPage: NextPage = () => {
   const { data: session, status } = useSession();
 
   const router = useRouter();
@@ -57,4 +58,4 @@ const ConfirmRequest = () => {
   );
 };
 
-export default ConfirmRequest;
+export default ConfirmRequestPage;

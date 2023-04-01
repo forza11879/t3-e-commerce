@@ -36,6 +36,13 @@ export { VerificationTokenAggregateArgsSchema } from './VerificationTokenAggrega
 export { VerificationTokenGroupByArgsSchema } from './VerificationTokenGroupByArgsSchema';
 export { VerificationTokenFindUniqueArgsSchema } from './VerificationTokenFindUniqueArgsSchema';
 export { VerificationTokenFindUniqueOrThrowArgsSchema } from './VerificationTokenFindUniqueOrThrowArgsSchema';
+export { CategoryFindFirstArgsSchema } from './CategoryFindFirstArgsSchema';
+export { CategoryFindFirstOrThrowArgsSchema } from './CategoryFindFirstOrThrowArgsSchema';
+export { CategoryFindManyArgsSchema } from './CategoryFindManyArgsSchema';
+export { CategoryAggregateArgsSchema } from './CategoryAggregateArgsSchema';
+export { CategoryGroupByArgsSchema } from './CategoryGroupByArgsSchema';
+export { CategoryFindUniqueArgsSchema } from './CategoryFindUniqueArgsSchema';
+export { CategoryFindUniqueOrThrowArgsSchema } from './CategoryFindUniqueOrThrowArgsSchema';
 export { ExampleCreateArgsSchema } from './ExampleCreateArgsSchema';
 export { ExampleUpsertArgsSchema } from './ExampleUpsertArgsSchema';
 export { ExampleCreateManyArgsSchema } from './ExampleCreateManyArgsSchema';
@@ -71,3 +78,10 @@ export { VerificationTokenDeleteArgsSchema } from './VerificationTokenDeleteArgs
 export { VerificationTokenUpdateArgsSchema } from './VerificationTokenUpdateArgsSchema';
 export { VerificationTokenUpdateManyArgsSchema } from './VerificationTokenUpdateManyArgsSchema';
 export { VerificationTokenDeleteManyArgsSchema } from './VerificationTokenDeleteManyArgsSchema';
+export { CategoryCreateArgsSchema } from './CategoryCreateArgsSchema';
+export { CategoryUpsertArgsSchema } from './CategoryUpsertArgsSchema';
+export { CategoryCreateManyArgsSchema } from './CategoryCreateManyArgsSchema';
+export { CategoryDeleteArgsSchema } from './CategoryDeleteArgsSchema';
+export { CategoryUpdateArgsSchema } from './CategoryUpdateArgsSchema';
+export { CategoryUpdateManyArgsSchema } from './CategoryUpdateManyArgsSchema';
+export { CategoryDeleteManyArgsSchema } from './CategoryDeleteManyArgsSchema';

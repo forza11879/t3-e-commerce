@@ -31,3 +31,7 @@ Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/ver
 
 - pscale database list
 - pscale branch list t3test
+
+## Restart Typescript Srever
+
+- command shift P (TypeScript: restart TS server)

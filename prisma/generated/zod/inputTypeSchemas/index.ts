@@ -23,6 +23,11 @@ export { VerificationTokenOrderByWithRelationInputSchema } from './VerificationT
 export { VerificationTokenWhereUniqueInputSchema } from './VerificationTokenWhereUniqueInputSchema';
 export { VerificationTokenOrderByWithAggregationInputSchema } from './VerificationTokenOrderByWithAggregationInputSchema';
 export { VerificationTokenScalarWhereWithAggregatesInputSchema } from './VerificationTokenScalarWhereWithAggregatesInputSchema';
+export { CategoryWhereInputSchema } from './CategoryWhereInputSchema';
+export { CategoryOrderByWithRelationInputSchema } from './CategoryOrderByWithRelationInputSchema';
+export { CategoryWhereUniqueInputSchema } from './CategoryWhereUniqueInputSchema';
+export { CategoryOrderByWithAggregationInputSchema } from './CategoryOrderByWithAggregationInputSchema';
+export { CategoryScalarWhereWithAggregatesInputSchema } from './CategoryScalarWhereWithAggregatesInputSchema';
 export { ExampleCreateInputSchema } from './ExampleCreateInputSchema';
 export { ExampleUncheckedCreateInputSchema } from './ExampleUncheckedCreateInputSchema';
 export { ExampleUpdateInputSchema } from './ExampleUpdateInputSchema';
@@ -58,6 +63,13 @@ export { VerificationTokenUncheckedUpdateInputSchema } from './VerificationToken
 export { VerificationTokenCreateManyInputSchema } from './VerificationTokenCreateManyInputSchema';
 export { VerificationTokenUpdateManyMutationInputSchema } from './VerificationTokenUpdateManyMutationInputSchema';
 export { VerificationTokenUncheckedUpdateManyInputSchema } from './VerificationTokenUncheckedUpdateManyInputSchema';
+export { CategoryCreateInputSchema } from './CategoryCreateInputSchema';
+export { CategoryUncheckedCreateInputSchema } from './CategoryUncheckedCreateInputSchema';
+export { CategoryUpdateInputSchema } from './CategoryUpdateInputSchema';
+export { CategoryUncheckedUpdateInputSchema } from './CategoryUncheckedUpdateInputSchema';
+export { CategoryCreateManyInputSchema } from './CategoryCreateManyInputSchema';
+export { CategoryUpdateManyMutationInputSchema } from './CategoryUpdateManyMutationInputSchema';
+export { CategoryUncheckedUpdateManyInputSchema } from './CategoryUncheckedUpdateManyInputSchema';
 export { StringFilterSchema } from './StringFilterSchema';
 export { DateTimeFilterSchema } from './DateTimeFilterSchema';
 export { ExampleCountOrderByAggregateInputSchema } from './ExampleCountOrderByAggregateInputSchema';
@@ -94,6 +106,9 @@ export { VerificationTokenIdentifierTokenCompoundUniqueInputSchema } from './Ver
 export { VerificationTokenCountOrderByAggregateInputSchema } from './VerificationTokenCountOrderByAggregateInputSchema';
 export { VerificationTokenMaxOrderByAggregateInputSchema } from './VerificationTokenMaxOrderByAggregateInputSchema';
 export { VerificationTokenMinOrderByAggregateInputSchema } from './VerificationTokenMinOrderByAggregateInputSchema';
+export { CategoryCountOrderByAggregateInputSchema } from './CategoryCountOrderByAggregateInputSchema';
+export { CategoryMaxOrderByAggregateInputSchema } from './CategoryMaxOrderByAggregateInputSchema';
+export { CategoryMinOrderByAggregateInputSchema } from './CategoryMinOrderByAggregateInputSchema';
 export { StringFieldUpdateOperationsInputSchema } from './StringFieldUpdateOperationsInputSchema';
 export { DateTimeFieldUpdateOperationsInputSchema } from './DateTimeFieldUpdateOperationsInputSchema';
 export { UserCreateNestedOneWithoutAccountsInputSchema } from './UserCreateNestedOneWithoutAccountsInputSchema';
@@ -163,6 +178,7 @@ export { SessionUpdateWithoutUserInputSchema } from './SessionUpdateWithoutUserI
 export { SessionUncheckedUpdateWithoutUserInputSchema } from './SessionUncheckedUpdateWithoutUserInputSchema';
 export { SessionUncheckedUpdateManyWithoutSessionsInputSchema } from './SessionUncheckedUpdateManyWithoutSessionsInputSchema';
 export { AccountScalarFieldEnumSchema } from './AccountScalarFieldEnumSchema';
+export { CategoryScalarFieldEnumSchema } from './CategoryScalarFieldEnumSchema';
 export { ExampleScalarFieldEnumSchema } from './ExampleScalarFieldEnumSchema';
 export { SessionScalarFieldEnumSchema } from './SessionScalarFieldEnumSchema';
 export { SortOrderSchema } from './SortOrderSchema';
