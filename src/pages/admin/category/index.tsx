@@ -1,34 +1,23 @@
-import { useRef, useEffect, useState } from 'react';
-import { useSession } from "next-auth/react";
-import { useRouter } from 'next/router';
-// import Link from 'next/link';
+import { useRef, useState } from 'react';
+import Link from 'next/link';
 import {
   useQueryCategories,
   useMutationCreateCategory,
-  // useMutationRemoveCategory,
+  useMutationRemoveCategory,
   // categoryQueryKeys,
 } from '@/hooks/query/category';
 import AdminRoute from '@/components/lib/AdminRoute';
 import AdminNav from '@/components/nav/AdminNav';
 import CategoryForm from '@/components/forms/CategoryForm';
-// import LocalSearch from '@/components/forms/LocalSearch';
-import { api } from "@/utils/api";
-// import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import LocalSearch from '@/components/forms/LocalSearch';
+// import { api } from "@/utils/api";
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 // type CategoryOutput = RouterOutputs['category']['create']
 
 const CategoryCreate = () => {
-  // const { data: session, status } = useSession();
-  // const router = useRouter();
 
-  // const authenticated = status === "authenticated";
-  // const userRole = session?.user.role === "USER";
-
-  // useEffect(() => {
-  //   if (authenticated && userRole) void router.push('/')
-  // }, [authenticated, userRole, router])
-
-  // const [keyword, setKeyword] = useState('');
+  const [keyword, setKeyword] = useState('');
   const formRef = useRef<HTMLFormElement>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
 
@@ -38,7 +27,7 @@ const CategoryCreate = () => {
 
   const mutationCreateCategory = useMutationCreateCategory()
 
-  // const mutationRemoveCategory = useMutationRemoveCategory();
+  const mutationRemoveCategory = useMutationRemoveCategory();
 
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -58,27 +47,25 @@ const CategoryCreate = () => {
     }
   };
 
-  // const handleRemove = async (slug) => {
-  //   const options = {
-  //     url: `${process.env.api}/category/${slug}`,
-  //     token: token,
-  //     data: { slug },
-  //   };
+  const handleRemove = (slug: string) => {
+    const options = {
+      slug,
+    };
 
-  //   if (window.confirm('Delete?')) {
-  //     try {
-  //       mutationRemoveCategory.mutate(options);
-  //     } catch (error) {
-  //       console.log('handleRemove error: ', error);
-  //       // if (err.response.status === 400) {
-  //       // toast.error(error.response.data);
-  //       // }
-  //     }
-  //   }
-  // };
+    if (window.confirm('Delete?')) {
+      try {
+        mutationRemoveCategory.mutate(options);
+      } catch (error) {
+        console.log('handleRemove error: ', error);
+        // if (err.response.status === 400) {
+        // toast.error(error.response.data);
+        // }
+      }
+    }
+  };
 
-  // const searched = (keyword) => (item) =>
-  //   item.name.toLowerCase().includes(keyword);
+  const searched = (keyword: string) => (item: string) =>
+    item.name.toLowerCase().includes(keyword);
 
   return (
     <div className="container-fluid">
@@ -106,30 +93,30 @@ const CategoryCreate = () => {
               // error={mutationCreateCategory.error}
               handleSubmit={handleSubmit}
             />
-            {/* <LocalSearch keyword={keyword} setKeyword={setKeyword} /> */}
+            <LocalSearch keyword={keyword} setKeyword={setKeyword} />
 
-            {/* {isError ? (
-            <h4 className="text-danger">{error.message}</h4>
-          ) : data.length ? (
-            data.filter(searched(keyword)).map((item) => (
-              <div className="alert alert-secondary" key={item._id}>
-                {item.name}
-                <span
-                  onClick={() => handleRemove(item.slug)}
-                  className="btn btn-sm float-right"
-                >
-                  <DeleteOutlined className="text-danger" />
-                </span>
-                <Link href={`/admin/category/${item.slug}`}>
-                  <span className="btn btn-sm float-right">
-                    <EditOutlined className="text-warning" />
+            {isError ? (
+              <h4 className="text-danger">{error.message}</h4>
+            ) : data?.length ? (
+              data.filter(searched(keyword)).map((item) => (
+                <div className="alert alert-secondary" key={item._id}>
+                  {item.name}
+                  <span
+                    onClick={() => handleRemove(item.slug)}
+                    className="btn btn-sm float-right"
+                  >
+                    <DeleteOutlined className="text-danger" />
                   </span>
-                </Link>
-              </div>
-            ))
-          ) : (
-            <p>No Data</p>
-          )} */}
+                  <Link href={`/admin/category/${item.slug}`}>
+                    <span className="btn btn-sm float-right">
+                      <EditOutlined className="text-warning" />
+                    </span>
+                  </Link>
+                </div>
+              ))
+            ) : (
+              <p>No Data</p>
+            )}
           </div>
         </div>
       </AdminRoute>

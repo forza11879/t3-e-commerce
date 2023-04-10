@@ -63,7 +63,7 @@ export const categoryRouter = createTRPCRouter({
                 slug: z.string(),
             }),
         )
-        .query(({ ctx, input }) => {
+        .mutation(({ ctx, input }) => {
             return ctx.prisma.category.delete(
                 {
                     where: { slug: input.slug },

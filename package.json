@@ -44,6 +44,7 @@
     "zod-validation-error": "^1.1.0"
   },
   "devDependencies": {
+    "@tanstack/react-query-devtools": "^4.29.1",
     "@types/node": "^18.11.18",
     "@types/nodemailer": "^6.4.7",
     "@types/prettier": "^2.7.2",

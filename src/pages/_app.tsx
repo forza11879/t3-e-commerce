@@ -1,6 +1,7 @@
 import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { env } from "../env.mjs";
 import { ToastContainer } from 'react-toastify';
 // import nProgress from 'nprogress';
@@ -20,6 +21,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 
   return (
     <SessionProvider session={session}>
+      <ReactQueryDevtools initialIsOpen={true} />
       <Header />
       <ToastContainer />
       <Component {...pageProps} />
