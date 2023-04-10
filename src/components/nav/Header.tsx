@@ -23,29 +23,27 @@ const Header: React.FC = () => {
 
   const authenticated = status === "authenticated";
   const unauthenticated = status === "unauthenticated";
+
+  const userRole = session?.user.role === "USER"
+
+  const adminRole = session?.user.role === "ADMIN"
+
   const signinWindow = typeof window !== "undefined" && window?.location.href === 'http://localhost:3000/auth/signin'
 
   const email = session?.user.email || null;
 
   const clickEventHandler = async () => {
-    // await router.push(`/auth/signin`);
     await signOut();
   };
-
-
-
 
   const clickHandler = () => {
     return void clickEventHandler();
   };
 
   const clickEventHandlerPush = async (unauthenticated: boolean, signinWindow: boolean) => {
-    // console.log({ unauthenticated });
     try {
-
       if (unauthenticated && !Boolean(signinWindow))
         await router.push(`/auth/signin`);
-
     } catch (error) {
       console.log({ error });
     }
@@ -81,9 +79,13 @@ const Header: React.FC = () => {
           label: <Link href="/register">Register</Link>,
           key: "registerr",
         },
+        // {
+        //   label: <Link href="/admin/dashboard">Dashboard</Link>,
+        //   key: "Dashboard",
+        // },
         {
-          label: <Link href="/admin/dashboard">Dashboard</Link>,
-          key: "Dashboard",
+          label: authenticated && adminRole ? <Link href="/admin/dashboard">Admin Dashboard</Link> : <Link href="/user/history"> User Dashboard</Link>,
+          key: "Dashboard"
         },
         {
           label: <Button type="text" onClick={clickHandler}>

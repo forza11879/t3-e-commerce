@@ -27,7 +27,7 @@
       "@/controllers/*":["server/controllers/*"],
       "@/Models/*":["server/Models/*"],
       "@/firebase/*":["server/firebase/*"],
-      "@/util/*":["server/util/*"],
+      "@/utils/*":["utils/*"],
       
          }
   },

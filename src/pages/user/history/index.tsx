@@ -1,21 +1,17 @@
+import { useEffect } from "react"
 import { type NextPage } from "next";
-
-// import nookies from 'nookies';
-// import { QueryClient } from 'react-query';
-// import { dehydrate } from 'react-query/hydration';
-// import admin from '@/firebase/index';
-// import { currentUser } from '@/Models/User/index';
-// import { findUserOrders } from '@/Models/Order/index';
+import { useSession } from "next-auth/react";
+import { useRouter } from 'next/router';
 import UserNav from '@/components/nav/UserNav';
-// import ShowPaymentInfo from '@/components/cards/ShowPaymentInfo';
-// import { showDownloadLink } from '@/components/pdf/showDownloadLink';
-// import { useSelector, useDispatch } from 'react-redux';
-// import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-// import { toast } from 'react-toastify';
-// import { useQueryUserOrders, userQueryKeys } from '@/hooks/query/user';
 
-// const History = ({ token }) => {
 const HistoryPage: NextPage = () => {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const unauthenticated = status === "unauthenticated";
+
+  useEffect(() => {
+    if (unauthenticated) void router.push('/auth/signin')
+  }, [unauthenticated, router])
 
   // const userOrdersUseQuery = useQueryUserOrders(token);
 

@@ -3,8 +3,8 @@ import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import { useRouter } from 'next/router';
 
-// import AdminRoute from '@/components/lib/AdminRoute';
-// import AdminNav from '@/components/nav/AdminNav';
+import AdminRoute from '@/components/lib/AdminRoute';
+import AdminNav from '@/components/nav/AdminNav';
 // import nookies from 'nookies';
 // import { QueryClient } from 'react-query';
 // import { dehydrate } from 'react-query/hydration';
@@ -20,18 +20,6 @@ import { useRouter } from 'next/router';
 
 // const AdminDashBoard = ({ token, isAdmin, userId }) => {
 const AdminDashBoardPage: NextPage = () => {
-
-  const { data: session, status } = useSession();
-  const router = useRouter();
-
-
-  const authenticated = status === "authenticated";
-  const userRole = session?.user.role === "USER";
-  // const adminRole = session?.user.role === "ADMIN";
-
-  useEffect(() => {
-    if (authenticated && userRole) void router.push('/')
-  }, [authenticated, userRole, router])
 
   // const userOrdersUseQuery = useQueryUserOrders(userId, token);
   // const updateOrderStatusUseMutation = useMutationUpdateOrderStatus();
@@ -49,20 +37,20 @@ const AdminDashBoardPage: NextPage = () => {
 
   return (
     <div className="container-fluid">
-      {/* <AdminRoute isAdmin={isAdmin}> */}
-      <div className="row">
-        {/* <div className="col-md-2">
-          <AdminNav />
-        </div> */}
-        <div className="col-md-10">
-          <h4>Admin Dashboard</h4>
-          {/* <Orders
+      <AdminRoute>
+        <div className="row">
+          <div className="col-md-2">
+            <AdminNav />
+          </div>
+          <div className="col-md-10">
+            <h4>Admin Dashboard</h4>
+            {/* <Orders
               orders={userOrdersUseQuery.data}
               handleStatusChange={handleStatusChange}
             /> */}
+          </div>
         </div>
-      </div>
-      {/* </AdminRoute> */}
+      </AdminRoute>
     </div>
   );
 };

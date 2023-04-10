@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-const UserNav = () => (
+const UserNav: React.FC = () => (
   <nav>
     <ul className="nav flex-column">
       <li className="nav-item">
