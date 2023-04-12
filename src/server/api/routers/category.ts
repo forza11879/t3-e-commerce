@@ -45,13 +45,15 @@ export const categoryRouter = createTRPCRouter({
     update: protectedAdminProcedure
         .input(
             z.object({
-                name: z.string()
+                name: z.string(),
+                slug: z.string()
+
             }),
         )
         .mutation(({ ctx, input }) => {
             return ctx.prisma.category.update(
                 {
-                    where: { slug: input.name },
+                    where: { slug: input.slug },
                     data: { name: input.name, slug: slugify(input.name) }
                 }
             )

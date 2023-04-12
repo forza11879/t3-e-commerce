@@ -1,18 +1,25 @@
+import { useCallback } from "react";
 import { api } from "@/utils/api";
 import type { Category } from '@prisma/client';
 
-// export const categoryQueryKeys = {
-//     categories: getQueryKey(api.category.list, undefined, 'query'),
-//     // categories: ['categories'],
-//     category: (id: string) => [...categoryQueryKeys.categories, id],
-//     productsByCategory: (id: string) => [...categoryQueryKeys.categories, 'products', id],
-// };
+// Query
+export const useQueryCategories = () => {
+    return api.category.list.useQuery();
+}
 
-// export const useMutationCreateCategory = () => {
-//     return api.category.create.useMutation();
-// }
+export const useQueryCategory = (slug: string) => {
+    console.log({ slug });
+    return api.category.read.useQuery(
+        { slug },
+        {
+            enabled: Boolean(slug),
+        },
+    )
+}
 
-export const useMutationCreateCategoryy = () => {
+// Mutation
+
+export const useMutationCreateCategory = () => {
     // const queryClient = useQueryClient();
     const utils = api.useContext();
 
@@ -25,26 +32,23 @@ export const useMutationCreateCategoryy = () => {
 
             // Snapshot the previous value
             // In an optimistic update the UI behaves as though a change was successfully completed before receiving confirmation from the server that it actually was - it is being optimistic that it will eventually get the confirmation rather than an error. This allows for a more responsive user experience.
-            const newObject = {
-                name: variables.name,
-            };
-
             utils.category.list.setData(
                 undefined,
                 (oldQueryData) => {
                     console.log("onMutate oldQueryData: ", oldQueryData);
-                    // const newQueryData = [newObject, ...oldQueryData]
-                    const newQueryData = [newObject, ...oldQueryData]
-                    console.log("onMutate newQueryData: ", newQueryData);
-                    return newQueryData
+                    const newCategory: Category = {
+                        id: crypto.randomUUID(),
+                        name: variables.name,
+                        slug: "",
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                    };
+                    if (oldQueryData) {
+                        const newQueryData = [newCategory, ...oldQueryData]
+                        console.log("onMutate newQueryData: ", newQueryData);
+                        return newQueryData;
+                    }
                 }
-                // {
-                //     const newQueryData = oldQueryData?.filter(
-                //         (item) => item.name !== variables.name
-                //     );
-                //     newQueryData?.unshift(newObject);
-                //     return newQueryDataArray
-                // }
             );
 
             // return will pass the function or the value to the onError third argument:
@@ -110,9 +114,6 @@ export const useMutationCreateCategoryy = () => {
     );
 };
 
-export const useQueryCategories = () => {
-    return api.category.list.useQuery();
-}
 
 export const useMutationRemoveCategory = () => {
     const utils = api.useContext();
@@ -200,51 +201,52 @@ export const useMutationRemoveCategory = () => {
     )
 };
 
-
-export const useMutationCreateCategory = () => {
+export const useMutationUpdateCategory = () => {
     const utils = api.useContext();
 
-    return api.category.create.useMutation({
+    return api.category.update.useMutation({
         onMutate: async (variables) => {
-
+            // Cancel any outgoing refetches (so they don't overwrite(race condition) our optimistic update)
             await utils.category.list.invalidate()
+            // Snapshot the previous value
+            // In an optimistic update the UI behaves as though a change was successfully completed before receiving confirmation from the server that it actually was - it is being optimistic that it will eventually get the confirmation rather than an error. This allows for a more responsive user experience.
+            const newCategory: Category = {
+                id: crypto.randomUUID(),
+                name: variables.name,
+                slug: "",
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            };
 
             utils.category.list.setData(
                 undefined,
                 (oldQueryData) => {
-                    console.log("onMutate oldQueryData: ", oldQueryData);
-                    const newCategory: Category = {
-                        id: crypto.randomUUID(),
-                        name: variables.name,
-                        slug: "",
-                        createdAt: new Date(),
-                        updatedAt: new Date(),
-                    };
                     if (oldQueryData) {
-                        const newQueryData = [newCategory, ...oldQueryData]
-                        console.log("onMutate newQueryData: ", newQueryData);
+                        const newQueryData = oldQueryData.filter(
+                            (item) => item.slug !== variables.slug
+                        );
+                        newQueryData.unshift(newCategory);
+
                         return newQueryData;
                     }
                 }
-
-
-            )
-
-
+            );
             // return will pass the function or the value to the onError third argument:
             return () =>
                 utils.category.list.setData(
                     undefined,
                     (oldQueryData) => oldQueryData
                 );
-
         },
         onError: (error, variables, rollback) => {
             //   If there is an errror, then we will rollback
-            // console.log('CreateCategory onError error: ', error.response.data);
             if (rollback) {
                 rollback();
                 console.log('rollback');
+            }
+
+            if (error) {
+                // toast.error(error.response.data.error);
             }
         },
         onSuccess: (data, variables, context) => {
@@ -254,17 +256,22 @@ export const useMutationCreateCategory = () => {
                 utils.category.list.setData(
                     undefined,
                     (oldQueryData) => {
-                        const newQueryData = oldQueryData?.filter(
-                            (item) => item.name !== data.name
-                        );
-                        newQueryData?.unshift(data);
+                        if (oldQueryData) {
+                            const newQueryData = oldQueryData.filter((item) => item.slug !== variables.slug
+                            );
+                            newQueryData.unshift(data);
+                            return newQueryData;
 
-                        return newQueryData;
+                        }
                     }
                 );
+                // toast.success(`"${data.name}" is created`);
             }
         },
         onSettled: async (data, error, variables, context) => {
+            if (error) {
+                // toast.error(error.response.data.error);
+            }
             // Runs on either success or error. It is better to run invalidateQueries
             // onSettled in case there is an error to re-fetch the request
             // it is prefered to invalidateQueries  after using setQueryData inside onSuccess: because you are getting the latest data from the server
@@ -273,3 +280,4 @@ export const useMutationCreateCategory = () => {
     }
     );
 };
+

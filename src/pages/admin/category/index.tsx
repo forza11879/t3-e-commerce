@@ -12,6 +12,7 @@ import CategoryForm from '@/components/forms/CategoryForm';
 import LocalSearch from '@/components/forms/LocalSearch';
 // import { api } from "@/utils/api";
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import type { Category } from '@prisma/client';
 
 // type CategoryOutput = RouterOutputs['category']['create']
 
@@ -64,8 +65,16 @@ const CategoryCreate = () => {
     }
   };
 
-  const searched = (keyword: string) => (item: string) =>
-    item.name.toLowerCase().includes(keyword);
+  const searched = (keyword: string) => (item: Category) => {
+    // console.log("item: ", item)
+    // console.log("keyword: ", keyword)
+    // console.log("typeof keyword: ", typeof keyword)
+    // const result = item.name.toLowerCase().includes(keyword);
+    // console.log("result: ", result)
+
+    return item.name.toLowerCase().includes(keyword);
+
+  }
 
   return (
     <div className="container-fluid">
@@ -99,7 +108,7 @@ const CategoryCreate = () => {
               <h4 className="text-danger">{error.message}</h4>
             ) : data?.length ? (
               data.filter(searched(keyword)).map((item) => (
-                <div className="alert alert-secondary" key={item._id}>
+                <div className="alert alert-secondary" key={item.id}>
                   {item.name}
                   <span
                     onClick={() => handleRemove(item.slug)}
