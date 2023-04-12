@@ -15,14 +15,10 @@ import {
 const CategoryUpdate = () => {
   const router = useRouter()
   const slug = router.query.slug as string;
-  console.log({ slug });
   const formRef = useRef<HTMLFormElement>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
 
   const { data, isLoading } = useQueryCategory(slug);
-
-  console.log({ data });
-
 
   const mutationUpdateCategory = useMutationUpdateCategory();
 
@@ -31,7 +27,7 @@ const CategoryUpdate = () => {
     if (nameInputRef.current && formRef.current) {
       try {
         const enteredName = nameInputRef.current.value
-        console.log({ enteredName });
+        console.log("enteredName: ", enteredName);
         const options = {
           slug: slug,
           name: enteredName,

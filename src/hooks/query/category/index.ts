@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 import { api } from "@/utils/api";
 import type { Category } from '@prisma/client';
 
@@ -8,7 +7,6 @@ export const useQueryCategories = () => {
 }
 
 export const useQueryCategory = (slug: string) => {
-    console.log({ slug });
     return api.category.read.useQuery(
         { slug },
         {
@@ -206,36 +204,75 @@ export const useMutationUpdateCategory = () => {
 
     return api.category.update.useMutation({
         onMutate: async (variables) => {
+            // console.log("variables: ", variables);
             // Cancel any outgoing refetches (so they don't overwrite(race condition) our optimistic update)
-            await utils.category.list.invalidate()
+            await utils.category.list.cancel();
             // Snapshot the previous value
+            const previousQueryData = utils.category.list.getData()
             // In an optimistic update the UI behaves as though a change was successfully completed before receiving confirmation from the server that it actually was - it is being optimistic that it will eventually get the confirmation rather than an error. This allows for a more responsive user experience.
-            const newCategory: Category = {
-                id: crypto.randomUUID(),
-                name: variables.name,
-                slug: "",
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            };
+            // const newCategory: Category = {
+            //     id: crypto.randomUUID(),
+            //     name: variables.name,
+            //     slug: variables.name,
+            //     createdAt: new Date(),
+            //     updatedAt: new Date(),
+            // };
 
-            utils.category.list.setData(
-                undefined,
-                (oldQueryData) => {
-                    if (oldQueryData) {
-                        const newQueryData = oldQueryData.filter(
-                            (item) => item.slug !== variables.slug
-                        );
-                        newQueryData.unshift(newCategory);
+            // utils.category.list.setData(
+            //     undefined,
+            //     (oldQueryData) => {
+            //         if (oldQueryData) {
+            //             let lastIndex
+            //             const oldQueryDataLength = oldQueryData.length - 1
+            //             const newQueryData = oldQueryData.filter(
+            //                 (item) => {
+            //                     if (item.slug === variables.slug) {
+            //                         lastIndex = oldQueryData.lastIndexOf(item)
+            //                         // console.log("equal variables.slug:", variables.slug);
 
-                        return newQueryData;
-                    }
-                }
-            );
+            //                         // console.log("equal item.slug:", item.slug);
+
+            //                     }
+            //                     // console.log("out equal variables.slug:", variables.slug);
+
+            //                     // console.log("out equal item.slug:", item.slug);
+
+            //                     return item.slug !== variables.slug
+            //                 }
+            //             );
+            //             // console.log("oldQueryData: ", oldQueryData);
+            //             // console.log("before newQueryData: ", newQueryData);
+            //             // console.log({ lastIndex });
+            //             // console.log("oldQueryDataLength:", oldQueryDataLength);
+
+            //             // newQueryData.unshift(newCategory)
+            //             // console.log("after newQueryData: ", newQueryData);
+
+            //             if (lastIndex !== oldQueryDataLength) {
+            //                 newQueryData.unshift(newCategory);
+            //                 console.log("UNSHIFT");
+
+            //             }
+
+            //             if (lastIndex === oldQueryDataLength) {
+            //                 newQueryData.push(newCategory)
+            //                 console.log("PUSH");
+
+
+            //             }
+
+            //             // return newQueryData.unshift(newCategory);
+
+            //             return newQueryData
+
+            //         }
+            //     }
+            // );
             // return will pass the function or the value to the onError third argument:
             return () =>
                 utils.category.list.setData(
                     undefined,
-                    (oldQueryData) => oldQueryData
+                    previousQueryData
                 );
         },
         onError: (error, variables, rollback) => {
@@ -252,30 +289,79 @@ export const useMutationUpdateCategory = () => {
         onSuccess: (data, variables, context) => {
             // Runs only there is a success
             // saves http trip to the back-end
-            if (data) {
-                utils.category.list.setData(
-                    undefined,
-                    (oldQueryData) => {
-                        if (oldQueryData) {
-                            const newQueryData = oldQueryData.filter((item) => item.slug !== variables.slug
-                            );
-                            newQueryData.unshift(data);
-                            return newQueryData;
+            console.log("data: ", data);
+            console.log("variables: ", variables);
+
+            const newCategory: Category = {
+                id: crypto.randomUUID(),
+                name: variables.name,
+                slug: variables.name,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            };
+
+            utils.category.list.setData(
+                undefined,
+                (oldQueryData) => {
+                    if (oldQueryData) {
+                        let lastIndex
+                        const oldQueryDataLength = oldQueryData.length - 1
+                        const newQueryData = oldQueryData.filter(
+                            (item) => {
+                                if (item.slug === variables.slug) {
+                                    lastIndex = oldQueryData.lastIndexOf(item)
+                                    // console.log("equal variables.slug:", variables.slug);
+
+                                    // console.log("equal item.slug:", item.slug);
+
+                                }
+                                // console.log("out equal variables.slug:", variables.slug);
+
+                                // console.log("out equal item.slug:", item.slug);
+
+                                return item.slug !== variables.slug
+                            }
+                        );
+                        // console.log("oldQueryData: ", oldQueryData);
+                        // console.log("before newQueryData: ", newQueryData);
+                        // console.log({ lastIndex });
+                        // console.log("oldQueryDataLength:", oldQueryDataLength);
+
+                        // newQueryData.unshift(newCategory)
+                        // console.log("after newQueryData: ", newQueryData);
+
+                        if (lastIndex !== oldQueryDataLength) {
+                            newQueryData.unshift(newCategory);
+                            console.log("UNSHIFT");
 
                         }
+
+                        if (lastIndex === oldQueryDataLength) {
+                            newQueryData.push(newCategory)
+                            console.log("PUSH");
+
+
+                        }
+
+                        // return newQueryData.unshift(newCategory);
+
+                        return newQueryData
+
                     }
-                );
-                // toast.success(`"${data.name}" is created`);
-            }
+                }
+            );
+            //     // toast.success(`"${data.name}" is created`);
+
         },
         onSettled: async (data, error, variables, context) => {
+
             if (error) {
                 // toast.error(error.response.data.error);
             }
             // Runs on either success or error. It is better to run invalidateQueries
             // onSettled in case there is an error to re-fetch the request
             // it is prefered to invalidateQueries  after using setQueryData inside onSuccess: because you are getting the latest data from the server
-            await utils.category.list.invalidate()
+            return await utils.category.list.invalidate()
         },
     }
     );

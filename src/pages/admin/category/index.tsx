@@ -24,8 +24,6 @@ const CategoryCreate = () => {
 
   const { data, isLoading, isError, error, isFetching } = useQueryCategories();
 
-  console.log({ data });
-
   const mutationCreateCategory = useMutationCreateCategory()
 
   const mutationRemoveCategory = useMutationRemoveCategory();
@@ -35,7 +33,7 @@ const CategoryCreate = () => {
     try {
       if (nameInputRef.current && formRef.current) {
         const enteredName = nameInputRef.current.value;
-        console.log({ enteredName });
+        // console.log({ enteredName });
         const options = {
           name: enteredName
         };
