@@ -347,7 +347,6 @@ export const useMutationUpdateCategory = () => {
           const lastIndex =
             oldQueryData.findIndex((item) => item.slug === variables.slug) ??
             -1;
-          console.log("lastIndex: ", lastIndex);
           if (lastIndex === oldQueryData.length - 1) {
             return [...filteredData, newCategory];
           } else {
@@ -389,7 +388,7 @@ export const useMutationUpdateCategory = () => {
         console.log("rollback");
       }
     },
-    onSuccess: async (data, variables, context) => {
+    onSettled: async (data, variables, context) => {
       await utils.category.list.invalidate();
     },
   });
@@ -413,15 +412,17 @@ export const useMutationUpdateCategory2 = () => {
       };
 
       utils.category.list.setData(undefined, (oldQueryData) => {
-        const filteredData =
-          oldQueryData?.filter((item) => item.slug !== variables.slug) ?? [];
-        const lastIndex =
-          oldQueryData?.lastIndexOf((item) => item.slug === variables.slug) ??
-          -1;
-        if (lastIndex === oldQueryData.length - 1) {
-          return [...filteredData, newCategory];
-        } else {
-          return [newCategory, ...filteredData];
+        if (oldQueryData) {
+          const filteredData =
+            oldQueryData.filter((item) => item.slug !== variables.slug) ?? [];
+          const lastIndex =
+            oldQueryData.findIndex((item) => item.slug === variables.slug) ??
+            -1;
+          if (lastIndex === oldQueryData.length - 1) {
+            return [...filteredData, newCategory];
+          } else {
+            return [newCategory, ...filteredData];
+          }
         }
       });
 
@@ -436,7 +437,7 @@ export const useMutationUpdateCategory2 = () => {
       }
     },
 
-    onSuccess: async (data, variables, context) => {
+    onSettled: async (data, variables, context) => {
       await utils.category.list.invalidate();
     },
   });
