@@ -31,6 +31,6 @@
       
          }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs", "src/server/au.", "src/server/x", "src/hooks/query/category/index.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs", "src/server/au.", "src/server/x", "src/hooks/query/category/index.s"],
   "exclude": ["node_modules"]
 }

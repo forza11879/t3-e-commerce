@@ -345,7 +345,7 @@ export const useMutationUpdateCategory = () => {
           const filteredData =
             oldQueryData.filter((item) => item.slug !== variables.slug) ?? [];
           const lastIndex =
-            oldQueryData.lastIndexOf((item) => item.slug === variables.slug) ??
+            oldQueryData.findIndex((item) => item.slug === variables.slug) ??
             -1;
           console.log("lastIndex: ", lastIndex);
           if (lastIndex === oldQueryData.length - 1) {
