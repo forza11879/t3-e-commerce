@@ -323,3 +323,121 @@ export const useMutationUpdateCategory = () => {
     },
   });
 };
+
+import { api } from "@/utils/api";
+import type { Category } from "@prisma/client";
+
+export const useMutationUpdateCategory = () => {
+  const utils = api.useContext();
+
+  return api.category.update.useMutation({
+    onMutate: async (variables) => {
+      // Cancel any outgoing refetches (so they don't overwrite(race condition) our optimistic update)
+      await utils.category.list.cancel();
+      const previousQueryData = utils.category.list.getData();
+
+      const newCategory: Category = {
+        id: crypto.randomUUID(),
+        name: variables.name,
+        slug: variables.name,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      utils.category.list.setData(undefined, (oldQueryData) => {
+        const filteredData =
+          oldQueryData?.filter((item) => item.slug !== variables.slug) ?? [];
+        const lastIndex =
+          oldQueryData?.lastIndexOf((item) => item.slug === variables.slug) ??
+          -1;
+        if (lastIndex === oldQueryData.length - 1) {
+          return [...filteredData, newCategory];
+        } else {
+          return [newCategory, ...filteredData];
+        }
+      });
+
+      // utils.category.list.setData(undefined, (oldQueryData) => {
+      //   if (oldQueryData) {
+      //     let lastIndex;
+      //     const oldQueryDataLength = oldQueryData.length - 1;
+      //     const newQueryData = oldQueryData.filter((item) => {
+      //       if (item.slug === variables.slug) {
+      //         lastIndex = oldQueryData.lastIndexOf(item);
+      //       }
+      //       return item.slug !== variables.slug;
+      //     });
+
+      //     if (lastIndex !== oldQueryDataLength) {
+      //       newQueryData.unshift(newCategory);
+      //       console.log("UNSHIFT");
+      //     }
+
+      //     if (lastIndex === oldQueryDataLength) {
+      //       newQueryData.push(newCategory);
+      //       console.log("PUSH");
+      //     }
+      //     return newQueryData;
+      //   }
+      // });
+      // return will pass the function or the value to the onError third argument:
+      return () => utils.category.list.setData(undefined, previousQueryData);
+    },
+    onError: (error, variables, rollback) => {
+      //   If there is an errror, then we will rollback
+      if (rollback) {
+        rollback();
+        console.log("rollback");
+      }
+    },
+    onSuccess: async (data, variables, context) => {
+      await utils.category.list.invalidate();
+    },
+  });
+};
+
+export const useMutationUpdateCategoryy = () => {
+  const utils = api.useContext();
+
+  return api.category.update.useMutation({
+    onMutate: async (variables) => {
+      // Cancel any outgoing refetches (so they don't overwrite(race condition) our optimistic update)
+      await utils.category.list.cancel();
+      const previousQueryData = utils.category.list.getData();
+
+      const newCategory: Category = {
+        id: crypto.randomUUID(),
+        name: variables.name,
+        slug: variables.name,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      utils.category.list.setData(undefined, (oldQueryData) => {
+        const filteredData =
+          oldQueryData?.filter((item) => item.slug !== variables.slug) ?? [];
+        const lastIndex =
+          oldQueryData?.lastIndexOf((item) => item.slug === variables.slug) ??
+          -1;
+        if (lastIndex === oldQueryData.length - 1) {
+          return [...filteredData, newCategory];
+        } else {
+          return [newCategory, ...filteredData];
+        }
+      });
+
+      // Return a function to be used in the onError callback
+      return () => utils.category.list.setData(undefined, previousQueryData);
+    },
+
+    onError: (error, variables, rollback) => {
+      // If there is an error, rollback the mutation
+      if (rollback) {
+        rollback();
+      }
+    },
+
+    onSuccess: async (data, variables, context) => {
+      await utils.category.list.invalidate();
+    },
+  });
+};
