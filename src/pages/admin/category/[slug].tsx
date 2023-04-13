@@ -6,8 +6,7 @@ import AdminNav from '@/components/nav/AdminNav';
 import CategoryForm from '@/components/forms/CategoryForm';
 import type { RouterOutputs } from "@/utils/api";
 import {
-  useMutationUpdateCategory,
-  useQueryCategory
+  useCategoryActions
 } from '@/hooks/query/category';
 
 // type CategoryOutput = RouterOutputs['category']['read'];
@@ -18,9 +17,12 @@ const CategoryUpdate = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
 
-  const { data, isLoading } = useQueryCategory(slug);
+  const {
+    read,
+    update: mutationUpdateCategory,
+  } = useCategoryActions();
 
-  const mutationUpdateCategory = useMutationUpdateCategory();
+  const { data, isLoading } = read(slug);
 
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -61,6 +63,7 @@ const CategoryUpdate = () => {
               // mutation={mutationCreateCategory}
               isLoading={mutationUpdateCategory.isLoading}
               isError={mutationUpdateCategory.isError}
+              name={data ? data.name : ''}
               // error={mutationCreateCategory.error}
               handleSubmit={handleSubmit}
             />

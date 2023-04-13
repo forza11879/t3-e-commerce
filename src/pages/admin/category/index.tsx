@@ -1,16 +1,12 @@
 import { useRef, useState } from 'react';
 import Link from 'next/link';
 import {
-  useQueryCategories,
-  useMutationCreateCategory,
-  useMutationRemoveCategory,
-  // categoryQueryKeys,
+  useCategoryActions
 } from '@/hooks/query/category';
 import AdminRoute from '@/components/lib/AdminRoute';
 import AdminNav from '@/components/nav/AdminNav';
 import CategoryForm from '@/components/forms/CategoryForm';
 import LocalSearch from '@/components/forms/LocalSearch';
-// import { api } from "@/utils/api";
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import type { Category } from '@prisma/client';
 
@@ -22,11 +18,11 @@ const CategoryCreate = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
 
-  const { data, isLoading, isError, error, isFetching } = useQueryCategories();
-
-  const mutationCreateCategory = useMutationCreateCategory()
-
-  const mutationRemoveCategory = useMutationRemoveCategory();
+  const {
+    list: { data, isLoading, isError, error, isFetching },
+    create: mutationCreateCategory,
+    remove: mutationRemoveCategory
+  } = useCategoryActions();
 
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -64,11 +60,6 @@ const CategoryCreate = () => {
   };
 
   const searched = (keyword: string) => (item: Category) => {
-    // console.log("item: ", item)
-    // console.log("keyword: ", keyword)
-    // console.log("typeof keyword: ", typeof keyword)
-    // const result = item.name.toLowerCase().includes(keyword);
-    // console.log("result: ", result)
 
     return item.name.toLowerCase().includes(keyword);
 
@@ -105,8 +96,9 @@ const CategoryCreate = () => {
             {isError ? (
               <h4 className="text-danger">{error.message}</h4>
             ) : data?.length ? (
-              data.filter(searched(keyword)).map((item) => (
-                <div className="alert alert-secondary" key={item.id}>
+              data.filter(searched(keyword)).map((item) => {
+                console.log("item: ", item.name)
+                return <div className="alert alert-secondary" key={item.id}>
                   {item.name}
                   <span
                     onClick={() => handleRemove(item.slug)}
@@ -120,7 +112,9 @@ const CategoryCreate = () => {
                     </span>
                   </Link>
                 </div>
-              ))
+
+              }
+              )
             ) : (
               <p>No Data</p>
             )}

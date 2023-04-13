@@ -21,7 +21,7 @@ const CategoryForm = ({ ...props }: CategoryFormProps) => (
         type="text"
         className="form-control"
         ref={props.nameInputRef}
-        defaultValue={""}
+        defaultValue={props.name}
         autoFocus
         required
       />
