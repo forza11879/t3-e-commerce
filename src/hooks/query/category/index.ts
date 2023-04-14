@@ -1,4 +1,3 @@
-// import { useRef } from "react";
 import { api } from "@/utils/api";
 import type { Category } from "@prisma/client";
 import { getQueryKey } from '@trpc/react-query';
@@ -6,18 +5,13 @@ import { useQueryClient } from '@tanstack/react-query';
 
 export const useCategoryActions = () => {
   const utils = api.useContext();
-  // const mutationCounterRef = useRef(0);
   const queryClient = useQueryClient();
-  //Queries
-  const list = api.category.list.useQuery();
-
-  // See if a query is fetching
-  const listKey = getQueryKey(api.category.list, undefined, 'query');
-  console.log('listKey: ', listKey);
 
   // Set some query defaults for an entire router
   const categoryKey = getQueryKey(api.category);
   queryClient.setQueryDefaults(categoryKey, { staleTime: 30 * 60 * 1000 });
+  //Queries
+  const list = api.category.list.useQuery();
 
   const read = (slug: string) => {
     return api.category.read.useQuery(
@@ -109,8 +103,7 @@ export const useCategoryActions = () => {
   const update = api.category.update.useMutation({
     onMutate: async (variables) => {
       // Cancel any outgoing refetches (so they don't overwrite(race condition) our optimistic update)
-      // void utils.category.list.cancel();
-      await queryClient.cancelQueries(...listKey);
+      await utils.category.list.cancel();
       const previousQueryData = utils.category.list.getData();
 
       const newCategory: Category = {
@@ -135,20 +128,9 @@ export const useCategoryActions = () => {
       }
       );
 
-      // Increment the mutation counter
-      // mutationCounterRef.current++;
-
       // return will pass the function or the value to the onError third argument:
       return () => utils.category.list.setData(undefined, previousQueryData);
-      // {
-      //   // Decrement the mutation counter
-      //   mutationCounterRef.current--;
-      //   // Only invalidate queries if there are no ongoing mutations
-      //   if (mutationCounterRef.current === 0) {
-      //     utils.category.list.setData(undefined, previousQueryData);
-      //     await utils.category.list.invalidate();
-      //   }
-      // }
+
     },
     onError: (error, variables, rollback) => {
       //   If there is an errror, then we will rollback
@@ -162,12 +144,6 @@ export const useCategoryActions = () => {
     },
     onSettled: async (data, variables, context) => {
       await utils.category.list.invalidate();
-      // Decrement the mutation counter
-      // mutationCounterRef.current--;
-      // // Only invalidate queries if there are no ongoing mutations
-      // if (mutationCounterRef.current === 0) {
-      //   await utils.category.list.invalidate();
-      // }
     },
   });
   const remove = api.category.remove.useMutation({
