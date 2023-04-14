@@ -1,16 +1,24 @@
 import { api } from "@/utils/api";
 import type { Category } from "@prisma/client";
+import { getQueryKey } from "@trpc/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const useCategoryActions = () => {
   const utils = api.useContext();
+  const queryClient = useQueryClient();
+
+  // Set some query defaults for an entire router
+  const categoryKey = getQueryKey(api.category);
+  queryClient.setQueryDefaults(categoryKey, { staleTime: 30 * 60 * 1000 });
   //Queries
   const list = api.category.list.useQuery();
 
   // Mutations
-  update = api.category.update.useMutation({
-    onMutate: (variables) => {
+
+  const update = api.category.update.useMutation({
+    onMutate: async (variables) => {
       // Cancel any outgoing refetches (so they don't overwrite(race condition) our optimistic update)
-      void utils.category.list.cancel();
+      await utils.category.list.cancel();
       const previousQueryData = utils.category.list.getData();
 
       const newCategory: Category = {
