@@ -1,17 +1,17 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-generator zod {
-    provider                  = "zod-prisma-types"
-    output                    = "./generated/zod"
-    createRelationValuesTypes = true
-    useMultipleFiles          = true
-    // relationModel         = true
-    // modelCase             = "PascalCase"
-    // modelSuffix           = "Model"
-    // useDecimalJs          = true
-    // prismaJsonNullability = true
-}
+// generator zod {
+//     provider                  = "zod-prisma-types"
+//     output                    = "./generated/zod"
+//     createRelationValuesTypes = true
+//     useMultipleFiles          = true
+//     // relationModel         = true
+//     // modelCase             = "PascalCase"
+//     // modelSuffix           = "Model"
+//     // useDecimalJs          = true
+//     // prismaJsonNullability = true
+// }
 
 generator client {
     provider = "prisma-client-js"
