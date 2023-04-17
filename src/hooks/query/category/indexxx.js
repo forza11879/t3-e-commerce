@@ -1,17 +1,20 @@
+import { useCallback } from "react";
 import { api } from "@/utils/api";
 import type { Category } from "@prisma/client";
-import { getQueryKey } from "@trpc/react-query";
-import { useQueryClient } from "@tanstack/react-query";
 
 export const useCategoryActions = () => {
   const utils = api.useContext();
-  const queryClient = useQueryClient();
 
-  // Set some query defaults for an entire router
-  const categoryKey = getQueryKey(api.category);
-  queryClient.setQueryDefaults(categoryKey, { staleTime: 30 * 60 * 1000 });
   //Queries
-  const list = api.category.list.useQuery();
+  const list = api.category.list.useQuery(undefined, {
+    select: useCallback((data: Category[]) => {
+      return data;
+    }, []),
+    staleTime: Infinity, // stays in fresh State for ex:1000ms(or Infinity) then turns into Stale State
+    onError: (error) => {
+      console.log("list category error: ", error);
+    },
+  });
 
   // Mutations
 
@@ -51,9 +54,6 @@ export const useCategoryActions = () => {
         rollback();
         console.log("rollback");
       }
-    },
-    onSuccess: async (data, variables, context) => {
-      await utils.category.list.cancel();
     },
     onSettled: async (data, variables, context) => {
       await utils.category.list.invalidate();
