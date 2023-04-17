@@ -1,7 +1,8 @@
+import { useCallback } from "react";
 import { api } from "@/utils/api";
 import type { Category } from "@prisma/client";
-import { getQueryKey } from '@trpc/react-query';
-import { useQueryClient } from '@tanstack/react-query';
+import { getQueryKey } from "@trpc/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const useCategoryActions = () => {
   const utils = api.useContext();
@@ -11,13 +12,20 @@ export const useCategoryActions = () => {
   const categoryKey = getQueryKey(api.category);
   queryClient.setQueryDefaults(categoryKey, { staleTime: 30 * 60 * 1000 });
   //Queries
-  const list = api.category.list.useQuery();
+  const list = api.category.list.useQuery(undefined, {
+    select: useCallback((data) => {
+      // selectors will only be called if data exists, so you don't have to care about undefined here.
+      // console.log(JSON.parse(data));
+      return data;
+    }, []),
+  });
 
   const read = (slug: string) => {
     return api.category.read.useQuery(
       { slug },
       {
         enabled: Boolean(slug),
+        refetchOnWindowFocus: false,
       }
     );
   };
@@ -125,12 +133,10 @@ export const useCategoryActions = () => {
 
           return filteredData;
         }
-      }
-      );
+      });
 
       // return will pass the function or the value to the onError third argument:
       return () => utils.category.list.setData(undefined, previousQueryData);
-
     },
     onError: (error, variables, rollback) => {
       //   If there is an errror, then we will rollback
@@ -225,7 +231,6 @@ export const useCategoryActions = () => {
     read,
     create,
     update,
-    remove
-  }
-}
-
+    remove,
+  };
+};
