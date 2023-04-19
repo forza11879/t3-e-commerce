@@ -27,11 +27,11 @@ datasource db {
     relationMode = "prisma"
 }
 
-// model Example {
-//     id        String   @id @default(cuid())
-//     createdAt DateTime @default(now())
-//     updatedAt DateTime @updatedAt
-// }
+model Example {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
 
 model Account {
     id                 String  @id @default(cuid())
@@ -73,8 +73,6 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
-// User and Cart have a one-to-one relationship, where each Cart is associated with a single User. This is indicated by the orderedBy field in the CartSchema, which references the User model
-// User and Product have a many-to-many relationship, where each User can have multiple Products in their wishlist and each Product can be in multiple users' wishlists. This is indicated by the wishlist field in the UserSchema, which is an array of references to the Product model.
 model User {
     id            String    @id @default(cuid())
     name          String?
@@ -92,8 +90,6 @@ model User {
     updatedAt     DateTime  @updatedAt()
 }
 
-// User and Cart have a one-to-one relationship, where each Cart is associated with a single User. This is indicated by the orderedBy field in the CartSchema, which references the User model
-// Product and Cart have a many-to-many relationship, where each Product can be in multiple Carts and each Cart can have multiple Products. This is indicated by the products field in the CartSchema, which is an array of objects that include a reference to the Product model.
 model Cart {
     id                 String    @id @default(cuid())
     products           Product[]
@@ -105,8 +101,6 @@ model Cart {
     updatedAt          DateTime  @updatedAt
 }
 
-// Category and Product have a one-to-many relationship, where each Category can have multiple Products. This is indicated by the category field in the ProductSchema, which references the Category model.
-
 model Category {
     id            String        @id @default(cuid())
     name          String
@@ -117,7 +111,6 @@ model Category {
     updatedAt     DateTime?     @updatedAt
 }
 
-// User and Product have a many-to-many relationship, where each User can have multiple Products in their wishlist and each Product can be in multiple users' wishlists. This is indicated by the wishlist field in the UserSchema, which is an array of references to the Product model.
 model Product {
     id            String        @id @default(cuid())
     title         String
@@ -142,7 +135,6 @@ model Product {
     @@index([categoryId])
 }
 
-// SubCategory and Product have a many-to-many relationship, where each Product can belong to multiple SubCategorys and each SubCategory can have multiple Products. This is indicated by the subcategories field in the ProductSchema, which is an array of references to the SubCategory model.
 model SubCategory {
     id         String    @id @default(cuid())
     name       String
