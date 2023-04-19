@@ -116,27 +116,26 @@ model Category {
     slug        String        @unique
     // 
     products    Product[]
+    SubCategory SubCategory[]
     createdAt   DateTime      @default(now())
     updatedAt   DateTime?     @updatedAt
-    SubCategory SubCategory[]
 }
 
 // User and Product have a many-to-many relationship, where each User can have multiple Products in their wishlist and each Product can be in multiple users' wishlists. This is indicated by the wishlist field in the UserSchema, which is an array of references to the Product model.
 model Product {
-    id          String   @id @default(cuid())
-    title       String
-    slug        String   @unique
-    description String
-    price       Float
-    quantity    Int
-    sold        Int      @default(0)
-    shipping    Shipping
-    color       Color
-    brand       Brand
+    id            String        @id @default(cuid())
+    title         String
+    slug          String        @unique
+    description   String
+    price         Float
+    quantity      Int
+    sold          Int           @default(0)
+    shipping      Shipping
+    color         Color
+    brand         Brand
     // 
-    category    Category @relation(fields: [categoryId], references: [id])
-    categoryId  String
-
+    category      Category      @relation(fields: [categoryId], references: [id])
+    categoryId    String
     // 
     subcategories SubCategory[]
     // 
@@ -186,10 +185,8 @@ model Rating {
     id        String   @id @default(cuid())
     star      Int
     postedBy  User?    @relation(fields: [userId], references: [id])
-    // postedBy  User?
     userId    String?
     product   Product? @relation(fields: [productId], references: [id])
-    // product   Product? @relation("ProductRating", fields: [productId])
     productId String?
     created   DateTime @default(now())
     updated   DateTime @updatedAt
