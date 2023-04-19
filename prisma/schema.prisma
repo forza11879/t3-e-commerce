@@ -73,194 +73,149 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
-// model User {
-//     id            String    @id @default(cuid())
-//     name          String?
-//     email         String    @unique
-//     emailVerified DateTime?
-//     cart          Cart[]    @relation("UserCart")
-//     address       String?
-//     wishlist      Product[] @relation("UserWishlist", references: [id])
-//     // wishlist      Product[] @relation("UserWishlist")
-//     image         String?
-//     role          Role      @default(USER)
-//     accounts      Account[]
-//     sessions      Session[]
-//     ratings       Rating[]
-//     // rating???
-//     createdAt     DateTime  @default(now())
-//     updatedAt     DateTime  @updatedAt()
-// }
+// User and Cart have a one-to-one relationship, where each Cart is associated with a single User. This is indicated by the orderedBy field in the CartSchema, which references the User model
+model User {
+    id            String    @id @default(cuid())
+    name          String?
+    email         String    @unique
+    emailVerified DateTime?
+    // 
+    cart          Cart?
+    address       String?
+    wishlist      Product?  @relation(fields: [productId], references: [id])
+    productId     String?
+    image         String?
+    role          Role      @default(USER)
+    accounts      Account[]
+    sessions      Session[]
+    ratings       Rating[]
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt()
 
-// model Cart {
-//     id                 String          @id @default(cuid())
-//     products           ProductInCart[]
-//     cartTotal          Float?
-//     totalAfterDiscount Float?
-//     orderedBy          User?           @relation(fields: [orderedById], references: [id])
-//     // orderedBy          User?
-//     orderedById        String?
-//     createdAt          DateTime        @default(now())
-//     updatedAt          DateTime        @updatedAt()
-// }
+    @@index([productId])
+}
 
-// model ProductInCart {
-//     id        String   @id @default(cuid())
-//     product   Product? @relation(fields: [productId], references: [id])
-//     // product Product? @relation("ProductInCart", fields: [productId])
-//     productId String?
-//     count     Int?
-//     color     String?
-//     price     Float?
-//     cart      Cart?    @relation(fields: [cartId], references: [id])
-//     cartId    String?
-//     createdAt DateTime @default(now())
-//     updatedAt DateTime @updatedAt()
-// }
+// User and Cart have a one-to-one relationship, where each Cart is associated with a single User. This is indicated by the orderedBy field in the CartSchema, which references the User model
+// Product and Cart have a many-to-many relationship, where each Product can be in multiple Carts and each Cart can have multiple Products. This is indicated by the products field in the CartSchema, which is an array of objects that include a reference to the Product model.
+model Cart {
+    id                 String    @id @default(cuid())
+    products           Product[]
+    cartTotal          Float?
+    totalAfterDiscount Float?
+    // 
+    orderedBy          User?     @relation(fields: [userId], references: [id])
+    userId             String    @unique
+    createdAt          DateTime  @default(now())
+    updatedAt          DateTime  @updatedAt
+}
 
-// enum Role {
-//     USER
-//     ADMIN
-// }
+// Category and Product have a one-to-many relationship, where each Category can have multiple Products. This is indicated by the category field in the ProductSchema, which references the Category model.
 
-// model Category {
-//     id      String   @id @default(cuid())
-//     name    String
-//     slug    String   @unique
-//     // subcategory SubCategory?
-//     // product     Product?
-//     created DateTime @default(now())
-//     updated DateTime @updatedAt
-// }
+model Category {
+    id          String        @id @default(cuid())
+    name        String
+    slug        String        @unique
+    // 
+    products    Product[]
+    createdAt   DateTime      @default(now())
+    updatedAt   DateTime?     @updatedAt
+    SubCategory SubCategory[]
+}
 
-// model SubCategory {
-//     id         String   @id @default(cuid())
-//     name       String
-//     slug       String   @unique
-//     category   Category @relation(fields: [categoryId], references: [id])
-//     // category Category @relation("SubCategoryParent", fields: [categoryId])
-//     categoryId String   @unique
-//     // categoryId String
-//     created    DateTime @default(now())
-//     updated    DateTime @updatedAt
-//     // product    Product[]
-// }
+// User and Product have a many-to-many relationship, where each User can have multiple Products in their wishlist and each Product can be in multiple users' wishlists. This is indicated by the wishlist field in the UserSchema, which is an array of references to the Product model.
+model Product {
+    id          String   @id @default(cuid())
+    title       String
+    slug        String   @unique
+    description String
+    price       Float
+    quantity    Int
+    sold        Int      @default(0)
+    shipping    String?
+    color       String?
+    brand       String?
+    // 
+    category    Category @relation(fields: [categoryId], references: [id])
+    categoryId  String
 
-// model Product {
-//     id            String       @id @default(cuid())
-//     title         String
-//     slug          String       @unique
-//     description   String
-//     price         Float
-//     category      Category?    @relation(fields: [categoryId], references: [id])
-//     // category    Category?
-//     categoryId    String?      @unique
-//     subcategory   SubCategory? @relation(fields: [subcategoryId], references: [id])
-//     // subcategories SubCategory[] @relation("SubCategoryProduct")
-//     subcategoryId String?
-//     quantity      Int
-//     sold          Int          @default(0)
-//     images        Image[]
-//     // images        String[]
-//     shipping      Shipping
-//     color         Color
-//     brand         Brand
-//     ratings       Rating[]
-//     // ratings       Rating[]      @relation("ProductRating")
-//     created       DateTime     @default(now())
-//     updated       DateTime     @updatedAt
+    // 
+    subcategories SubCategory[]
+    // 
+    carts         Cart[]
+    // 
+    users         User[]
+    images        Image[]
+    ratings       Rating[]
+    createdAt     DateTime      @default(now())
+    updatedAt     DateTime?     @updatedAt
 
-//     @@index([subcategoryId])
-// }
+    @@index([categoryId])
+}
 
-// model Image {
-//     id        String   @id @default(uuid())
-//     image     String
-//     product   Product  @relation(fields: [productId], references: [id])
-//     productId String
-//     createdAt DateTime @default(now())
-//     updatedAt DateTime @updatedAt
+// SubCategory and Product have a many-to-many relationship, where each Product can belong to multiple SubCategorys and each SubCategory can have multiple Products. This is indicated by the subcategories field in the ProductSchema, which is an array of references to the SubCategory model.
+model SubCategory {
+    id         String    @id @default(cuid())
+    name       String
+    slug       String    @unique
+    category   Category  @relation(fields: [categoryId], references: [id])
+    categoryId String
+    // 
+    products   Product[]
+    createdAt  DateTime  @default(now())
+    updatedAt  DateTime  @updatedAt
 
-//     @@index([productId])
-// }
+    @@index([categoryId])
+}
 
-// model Rating {
-//     id        String   @id @default(cuid())
-//     star      Int
-//     postedBy  User?    @relation(fields: [userId], references: [id])
-//     // postedBy  User?
-//     userId    String?
-//     product   Product? @relation(fields: [productId], references: [id])
-//     // product   Product? @relation("ProductRating", fields: [productId])
-//     productId String?
-//     created   DateTime @default(now())
-//     updated   DateTime @updatedAt
+enum Role {
+    USER
+    ADMIN
+}
 
-//     @@index([userId])
-//     @@index([productId])
-// }
+model Image {
+    id        String   @id @default(uuid())
+    image     String
+    product   Product  @relation(fields: [productId], references: [id])
+    productId String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
-// enum Shipping {
-//     Yes
-//     No
-// }
+    @@index([productId])
+}
 
-// enum Color {
-//     Black
-//     Brown
-//     Silver
-//     White
-//     Blue
-// }
+model Rating {
+    id        String   @id @default(cuid())
+    star      Int
+    postedBy  User?    @relation(fields: [userId], references: [id])
+    // postedBy  User?
+    userId    String?
+    product   Product? @relation(fields: [productId], references: [id])
+    // product   Product? @relation("ProductRating", fields: [productId])
+    productId String?
+    created   DateTime @default(now())
+    updated   DateTime @updatedAt
 
-// enum Brand {
-//     Apple
-//     Samsung
-//     Microsoft
-//     Lenovo
-//     ASUS
-// }
+    @@index([userId])
+    @@index([productId])
+}
 
-// model Coupon {
-//     id        String   @id @default(cuid())
-//     name      String   @unique
-//     expiry    DateTime
-//     discount  Float
-//     createdAt DateTime @default(now())
-//     updatedAt DateTime @updatedAt
-// }
+enum Shipping {
+    Yes
+    No
+}
 
-// model Order {
-//     id            String           @id @default(cuid())
-//     products      ProductInOrder[]
-//     paymentIntent Json?
-//     orderStatus   String?
-//     orderedBy     User?
-//     createdAt     DateTime         @default(now())
-//     updatedAt     DateTime         @updatedAt
-// }
+enum Color {
+    Black
+    Brown
+    Silver
+    White
+    Blue
+}
 
-// model ProductInOrder {
-//     id      String   @id @default(cuid())
-//     product Product? @relation("ProductInOrder", fields: [productId])
-//     //   product          Product?      @relation(fields: [productId], references: [id])
-//     //   productId        String
-
-//     count   Int
-//     color   String?
-//     order   Order   @relation(fields: [orderId], references: [id])
-//     orderId String
-// }
-
-// model ProductInOrder {
-//   id               String        @id @default(uuid())
-//   order            Order?        @relation(fields: [orderId], references: [id])
-//   orderId          String
-//   product          Product?      @relation(fields: [productId], references: [id])
-//   productId        String
-//   quantity         Int
-// }
-
-////////////////////////////////////////////////////////////////
-
-// Prisma models
+enum Brand {
+    Apple
+    Samsung
+    Microsoft
+    Lenovo
+    ASUS
+}
