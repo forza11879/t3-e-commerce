@@ -130,9 +130,9 @@ model Product {
     price       Float
     quantity    Int
     sold        Int      @default(0)
-    shipping    String?
-    color       String?
-    brand       String?
+    shipping    Shipping
+    color       Color
+    brand       Brand
     // 
     category    Category @relation(fields: [categoryId], references: [id])
     categoryId  String
