@@ -27,11 +27,11 @@ datasource db {
     relationMode = "prisma"
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-}
+// model Example {
+//     id        String   @id @default(cuid())
+//     createdAt DateTime @default(now())
+//     updatedAt DateTime @updatedAt
+// }
 
 model Account {
     id                 String  @id @default(cuid())
@@ -65,23 +65,6 @@ model Session {
     @@index([userId])
 }
 
-model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    role          Role      @default(USER)
-    accounts      Account[]
-    sessions      Session[]
-    rating        Rating[]
-}
-
-enum Role {
-    USER
-    ADMIN
-}
-
 model VerificationToken {
     identifier String
     token      String   @unique
@@ -90,92 +73,194 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
-model Category {
-    id          String        @id @default(cuid())
-    name        String
-    slug        String        @unique
-    SubCategory SubCategory[]
-    Product     Product[]
-    created     DateTime      @default(now())
-    updated     DateTime      @updatedAt
-}
+// model User {
+//     id            String    @id @default(cuid())
+//     name          String?
+//     email         String    @unique
+//     emailVerified DateTime?
+//     cart          Cart[]    @relation("UserCart")
+//     address       String?
+//     wishlist      Product[] @relation("UserWishlist", references: [id])
+//     // wishlist      Product[] @relation("UserWishlist")
+//     image         String?
+//     role          Role      @default(USER)
+//     accounts      Account[]
+//     sessions      Session[]
+//     ratings       Rating[]
+//     // rating???
+//     createdAt     DateTime  @default(now())
+//     updatedAt     DateTime  @updatedAt()
+// }
 
-model SubCategory {
-    id        String   @id @default(cuid())
-    name      String
-    slug      String   @unique
-    parent    Category @relation(fields: [parentId], references: [id])
-    parentId  String
-    created   DateTime @default(now())
-    updated   DateTime @updatedAt
-    Product   Product? @relation(fields: [productId], references: [id])
-    productId String?
+// model Cart {
+//     id                 String          @id @default(cuid())
+//     products           ProductInCart[]
+//     cartTotal          Float?
+//     totalAfterDiscount Float?
+//     orderedBy          User?           @relation(fields: [orderedById], references: [id])
+//     // orderedBy          User?
+//     orderedById        String?
+//     createdAt          DateTime        @default(now())
+//     updatedAt          DateTime        @updatedAt()
+// }
 
-    @@index([parentId])
-    @@index([productId])
-}
+// model ProductInCart {
+//     id        String   @id @default(cuid())
+//     product   Product? @relation(fields: [productId], references: [id])
+//     // product Product? @relation("ProductInCart", fields: [productId])
+//     productId String?
+//     count     Int?
+//     color     String?
+//     price     Float?
+//     cart      Cart?    @relation(fields: [cartId], references: [id])
+//     cartId    String?
+//     createdAt DateTime @default(now())
+//     updatedAt DateTime @updatedAt()
+// }
 
-model Product {
-    id            String        @id @default(cuid())
-    title         String
-    slug          String        @unique
-    description   String
-    price         Float
-    category      Category?     @relation(fields: [categoryId], references: [id])
-    categoryId    String?
-    subcategories SubCategory[] @relation(references: [id])
-    quantity      Int
-    sold          Int           @default(0)
-    images        Image[]
-    shipping      Shipping
-    color         Color
-    brand         Brand
-    ratings       Rating[]      @relation(references: [id])
-    created       DateTime      @default(now())
-    updated       DateTime      @updatedAt
+// enum Role {
+//     USER
+//     ADMIN
+// }
 
-    @@index([categoryId])
-}
+// model Category {
+//     id      String   @id @default(cuid())
+//     name    String
+//     slug    String   @unique
+//     // subcategory SubCategory?
+//     // product     Product?
+//     created DateTime @default(now())
+//     updated DateTime @updatedAt
+// }
 
-model Image {
-    id        String   @id @default(uuid())
-    image     String
-    product   Product  @relation(fields: [productId], references: [id])
-    productId String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+// model SubCategory {
+//     id         String   @id @default(cuid())
+//     name       String
+//     slug       String   @unique
+//     category   Category @relation(fields: [categoryId], references: [id])
+//     // category Category @relation("SubCategoryParent", fields: [categoryId])
+//     categoryId String   @unique
+//     // categoryId String
+//     created    DateTime @default(now())
+//     updated    DateTime @updatedAt
+//     // product    Product[]
+// }
 
-    @@index([productId])
-}
+// model Product {
+//     id            String       @id @default(cuid())
+//     title         String
+//     slug          String       @unique
+//     description   String
+//     price         Float
+//     category      Category?    @relation(fields: [categoryId], references: [id])
+//     // category    Category?
+//     categoryId    String?      @unique
+//     subcategory   SubCategory? @relation(fields: [subcategoryId], references: [id])
+//     // subcategories SubCategory[] @relation("SubCategoryProduct")
+//     subcategoryId String?
+//     quantity      Int
+//     sold          Int          @default(0)
+//     images        Image[]
+//     // images        String[]
+//     shipping      Shipping
+//     color         Color
+//     brand         Brand
+//     ratings       Rating[]
+//     // ratings       Rating[]      @relation("ProductRating")
+//     created       DateTime     @default(now())
+//     updated       DateTime     @updatedAt
 
-model Rating {
-    id        String   @id @default(cuid())
-    star      Int
-    postedBy  User?    @relation(fields: [userId], references: [id])
-    userId    String?
-    product   Product? @relation(fields: [productId], references: [id])
-    productId String?
-    created   DateTime @default(now())
-    updated   DateTime @updatedAt
-}
+//     @@index([subcategoryId])
+// }
 
-enum Shipping {
-    Yes
-    No
-}
+// model Image {
+//     id        String   @id @default(uuid())
+//     image     String
+//     product   Product  @relation(fields: [productId], references: [id])
+//     productId String
+//     createdAt DateTime @default(now())
+//     updatedAt DateTime @updatedAt
 
-enum Color {
-    Black
-    Brown
-    Silver
-    White
-    Blue
-}
+//     @@index([productId])
+// }
 
-enum Brand {
-    Apple
-    Samsung
-    Microsoft
-    Lenovo
-    ASUS
-}
+// model Rating {
+//     id        String   @id @default(cuid())
+//     star      Int
+//     postedBy  User?    @relation(fields: [userId], references: [id])
+//     // postedBy  User?
+//     userId    String?
+//     product   Product? @relation(fields: [productId], references: [id])
+//     // product   Product? @relation("ProductRating", fields: [productId])
+//     productId String?
+//     created   DateTime @default(now())
+//     updated   DateTime @updatedAt
+
+//     @@index([userId])
+//     @@index([productId])
+// }
+
+// enum Shipping {
+//     Yes
+//     No
+// }
+
+// enum Color {
+//     Black
+//     Brown
+//     Silver
+//     White
+//     Blue
+// }
+
+// enum Brand {
+//     Apple
+//     Samsung
+//     Microsoft
+//     Lenovo
+//     ASUS
+// }
+
+// model Coupon {
+//     id        String   @id @default(cuid())
+//     name      String   @unique
+//     expiry    DateTime
+//     discount  Float
+//     createdAt DateTime @default(now())
+//     updatedAt DateTime @updatedAt
+// }
+
+// model Order {
+//     id            String           @id @default(cuid())
+//     products      ProductInOrder[]
+//     paymentIntent Json?
+//     orderStatus   String?
+//     orderedBy     User?
+//     createdAt     DateTime         @default(now())
+//     updatedAt     DateTime         @updatedAt
+// }
+
+// model ProductInOrder {
+//     id      String   @id @default(cuid())
+//     product Product? @relation("ProductInOrder", fields: [productId])
+//     //   product          Product?      @relation(fields: [productId], references: [id])
+//     //   productId        String
+
+//     count   Int
+//     color   String?
+//     order   Order   @relation(fields: [orderId], references: [id])
+//     orderId String
+// }
+
+// model ProductInOrder {
+//   id               String        @id @default(uuid())
+//   order            Order?        @relation(fields: [orderId], references: [id])
+//   orderId          String
+//   product          Product?      @relation(fields: [productId], references: [id])
+//   productId        String
+//   quantity         Int
+// }
+
+////////////////////////////////////////////////////////////////
+
+// Prisma models
