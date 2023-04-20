@@ -87,7 +87,7 @@ model User {
     sessions      Session[]
     ratings       Rating[]
     createdAt     DateTime  @default(now())
-    updatedAt     DateTime  @updatedAt()
+    updatedAt     DateTime  @updatedAt
 }
 
 model Cart {

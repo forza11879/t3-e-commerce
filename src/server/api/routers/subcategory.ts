@@ -9,14 +9,15 @@ export const subcategoryRouter = createTRPCRouter({
                 .trim()
                 .min(2, { message: 'Name must be at least 2 characters long' })
                 .max(32, { message: 'Name cannot be more than 32 characters long' }),
-            parentId: z.string()
+            categoryId: z.string()
         }))
         .mutation(({ ctx, input }) => {
-            console.log('input.parentId: ', input.parentId);
-            return ctx.prisma.subcategory.create({
+            console.log('input.parentId: ', input.categoryId);
+
+            return ctx.prisma.subCategory.create({
                 data: {
                     name: input.name,
-                    parentId: input.parentId,
+                    categoryId: input.categoryId,
                     slug: slugify(input.name)
                 }
             })
@@ -24,34 +25,11 @@ export const subcategoryRouter = createTRPCRouter({
         }),
 
     list: publicProcedure.query(({ ctx }) => {
-        return ctx.prisma.subcategory.findMany
+        return ctx.prisma.subCategory.findMany
             ({
                 orderBy: { createdAt: 'desc' }
             })
     }),
-
-    export const readController = async (req, res) => {
-        const { slug } = req.query;
-        try {
-            const subcategory = await readSubCategory(slug);
-            const products = await readBySubCategory(subcategory);
-
-            res.status(200).json({ subcategory, products });
-        } catch (error) {
-            console.log('read controller error: ', error);
-            res.status(400).json('read request failed');
-        }
-    };
-
-    const readSubCategory = async (slug) => {
-        try {
-            const query = { slug: slug };
-            const subCategory = await SubCategory.findOne(query);
-            return subCategory;
-        } catch (error) {
-            console.log('read model error subCategory: ', error);
-        }
-    };
 
     read: publicProcedure
         .input(
@@ -59,27 +37,45 @@ export const subcategoryRouter = createTRPCRouter({
                 slug: z.string(),
             }),
         )
-        .query(({ ctx, input }) => {
-            const subcategory = ctx.prisma.subcategory.findUniqueOrThrow(
-                { where: { slug: input.slug } }
-            )
+        .query(async ({ ctx, input }) => {
+            const subcategory = await ctx.prisma.subCategory.findUniqueOrThrow(
+                {
+                    where: { slug: input.slug }
 
-            return subcategory
+                }
+            )
+            console.log("subcategory:  ", subcategory);
+            const products = await ctx.prisma.product.findMany(
+                {
+                    where: {
+                        subcategories: {
+                            some: { id: subcategory.id }
+                        }
+                    },
+
+                    include: {
+                        category: true
+                    }
+                }
+            )
+            return { subcategory, products }
+
         }),
 
     update: protectedAdminProcedure
         .input(
             z.object({
                 name: z.string(),
-                slug: z.string()
+                slug: z.string(),
+                category: z.string(),
 
             }),
         )
         .mutation(({ ctx, input }) => {
-            return ctx.prisma.category.update(
+            return ctx.prisma.subCategory.update(
                 {
                     where: { slug: input.slug },
-                    data: { name: input.name, slug: slugify(input.name) }
+                    data: { name: input.name, slug: slugify(input.name), categoryId: input.category }
                 }
             )
         }),
@@ -91,7 +87,7 @@ export const subcategoryRouter = createTRPCRouter({
             }),
         )
         .mutation(({ ctx, input }) => {
-            return ctx.prisma.category.delete(
+            return ctx.prisma.subCategory.delete(
                 {
                     where: { slug: input.slug },
                 }
