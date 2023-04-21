@@ -38,27 +38,35 @@ export const subcategoryRouter = createTRPCRouter({
             }),
         )
         .query(async ({ ctx, input }) => {
-            const subcategory = await ctx.prisma.subCategory.findUniqueOrThrow(
+            console.log("back-end input.slug: ", input.slug);
+            const subcategory = await ctx.prisma.subCategory.findFirstOrThrow(
                 {
-                    where: { slug: input.slug }
-
-                }
-            )
-            console.log("subcategory:  ", subcategory);
-            const products = await ctx.prisma.product.findMany(
-                {
-                    where: {
-                        subcategories: {
-                            some: { id: subcategory.id }
-                        }
-                    },
-
+                    where: { slug: input.slug },
                     include: {
                         category: true
                     }
+
                 }
             )
-            return { subcategory, products }
+
+
+            console.log("subcategory back-end:  ", subcategory);
+            // const products = await ctx.prisma.product.findMany(
+            //     {
+            //         where: {
+            //             subcategories: {
+            //                 some: { id: subcategory.id }
+            //             }
+            //         },
+
+            //         include: {
+            //             category: true
+            //         }
+            //     }
+            // )
+            // return { subcategory, products }
+            return subcategory
+
 
         }),
 

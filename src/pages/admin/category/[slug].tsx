@@ -7,7 +7,7 @@ import CategoryForm from '@/components/forms/CategoryForm';
 import type { RouterOutputs } from "@/utils/api";
 import {
   useCategoryActions
-} from '@/hooks/query/category';
+} from '@/hooks/query';
 
 // type CategoryOutput = RouterOutputs['category']['read'];
 
