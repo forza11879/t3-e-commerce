@@ -1,69 +1,69 @@
-import { useRef, useState } from 'react';
-import Link from 'next/link';
+import React, { useRef, useState } from "react";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import Link from "next/link";
 import {
-  useCategoryActions
-} from '@/hooks/query/category';
-import AdminRoute from '@/components/lib/AdminRoute';
-import AdminNav from '@/components/nav/AdminNav';
-import CategoryForm from '@/components/forms/CategoryForm';
-import LocalSearch from '@/components/forms/LocalSearch';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import type { Category } from '@prisma/client';
+  useCategoryActions,
+  useSubCategoryActions
+} from "@/hooks/query";
+import AdminRoute from "@/components/lib/AdminRoute";
+import AdminNav from "@/components/nav/AdminNav";
+import CategoryForm from "@/components/forms/CategoryForm";
+import LocalSearch from "@/components/forms/LocalSearch";
+import type { SubCategory } from '@prisma/client';
 
-// type CategoryOutput = RouterOutputs['category']['create']
+const SubCreate = () => {
+  const [category, setCategory] = useState("");
+  const [keyword, setKeyword] = useState("");
 
-const CategoryCreate = () => {
-
-  const [keyword, setKeyword] = useState('');
   const formRef = useRef<HTMLFormElement>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
 
+  const categoryQuery = useCategoryActions();
+
   const {
     list: { data, isLoading, isError, error, isFetching },
-    create: mutationCreateCategory,
-    remove: mutationRemoveCategory
-  } = useCategoryActions();
+    create: mutationCreateSubCategory,
+    remove: mutationRemoveSubCategory
+  } = useSubCategoryActions();
+
+
 
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
+
     try {
       if (nameInputRef.current && formRef.current) {
         const enteredName = nameInputRef.current.value;
-        // console.log({ enteredName });
+
         const options = {
-          name: enteredName
+          name: enteredName,
+          categoryId: category,
         };
-        mutationCreateCategory.mutate(options);
+        console.log({ options });
+
+        mutationCreateSubCategory.mutate(options);
         formRef.current.reset();
       }
+
     } catch (error) {
       console.log('handleSubmit CategoryCreate error: ', error);
       // if (error.response.status === 400) toast.error(error.response.data);
+
     }
+
   };
 
   const handleRemove = (slug: string) => {
     const options = {
       slug,
     };
-
-    if (window.confirm('Delete?')) {
-      try {
-        mutationRemoveCategory.mutate(options);
-      } catch (error) {
-        console.log('handleRemove error: ', error);
-        // if (err.response.status === 400) {
-        // toast.error(error.response.data);
-        // }
-      }
+    if (window.confirm("Delete?")) {
+      mutationRemoveSubCategory.mutate(options);
     }
   };
 
-  const searched = (keyword: string) => (item: Category) => {
-
-    return item.name.toLowerCase().includes(keyword);
-
-  }
+  const searched = (keyword: string) => (item: SubCategory) =>
+    item.name.toLowerCase().includes(keyword);
 
   return (
     <div className="container-fluid">
@@ -78,27 +78,45 @@ const CategoryCreate = () => {
             ) : isFetching ? (
               <h4 className="text-danger">Updating...</h4>
             ) : (
-              <h4>Create Category</h4>
+              <h4>Create Subcategory</h4>
             )}
-            {/* {isFetching ? <h4 className="text-danger">Updating...</h4> : null} */}
-            {/* {categoryForm()} */}
+
+            <div className="form-group">
+              <label>Parent category</label>
+              <select
+                name="category"
+                className="form-control"
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                <option>Please select</option>
+                {
+                  // categoryQuery.list.data?.length > 0 &&
+                  categoryQuery.list.data?.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
+              </select>
+            </div>
+
             <CategoryForm
               formRef={formRef}
               nameInputRef={nameInputRef}
               // mutation={mutationCreateCategory}
-              isLoading={mutationCreateCategory.isLoading}
-              isError={mutationCreateCategory.isError}
+              isLoading={mutationCreateSubCategory.isLoading}
+              isError={mutationCreateSubCategory.isError}
               // error={mutationCreateCategory.error}
               handleSubmit={handleSubmit}
             />
+
+
             <LocalSearch keyword={keyword} setKeyword={setKeyword} />
 
             {isError ? (
-              <h4 className="text-danger">{error.message}</h4>
+              <h4 className="text-danger">{error?.message}</h4>
             ) : data?.length ? (
-              data.filter(searched(keyword)).map((item) => {
-                console.log("item: ", item.name)
-                return <div className="alert alert-secondary" key={item.id}>
+              data.filter(searched(keyword)).map((item) => (
+                <div className="alert alert-secondary" key={item.id}>
                   {item.name}
                   <span
                     onClick={() => handleRemove(item.slug)}
@@ -106,15 +124,13 @@ const CategoryCreate = () => {
                   >
                     <DeleteOutlined className="text-danger" />
                   </span>
-                  <Link href={`/admin/category/${item.slug}`}>
+                  <Link href={`/admin/subcategory/${item.slug}`}>
                     <span className="btn btn-sm float-right">
                       <EditOutlined className="text-warning" />
                     </span>
                   </Link>
                 </div>
-
-              }
-              )
+              ))
             ) : (
               <p>No Data</p>
             )}
@@ -125,4 +141,4 @@ const CategoryCreate = () => {
   );
 };
 
-export default CategoryCreate;
+export default SubCreate;

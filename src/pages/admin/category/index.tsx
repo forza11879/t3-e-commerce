@@ -94,7 +94,7 @@ const CategoryCreate = () => {
             <LocalSearch keyword={keyword} setKeyword={setKeyword} />
 
             {isError ? (
-              <h4 className="text-danger">{error.message}</h4>
+              <h4 className="text-danger">{error?.message}</h4>
             ) : data?.length ? (
               data.filter(searched(keyword)).map((item) => {
                 console.log("item: ", item.name)
