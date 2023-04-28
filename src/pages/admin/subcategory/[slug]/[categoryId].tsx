@@ -11,14 +11,17 @@ import {
 
 const SubUpdate = () => {
   const router = useRouter()
-  const slug = router.query.slug as string;
-  console.log({ slug });
+  const slug = router.query.slug as string
+  const categoryId = router.query.categoryId as string
+
+  console.log("categoryId: ", categoryId);
+  console.log("slug: ", slug);
+
 
   const [parentInput, setParentInput] = useState('');
   const formRef = useRef<HTMLFormElement>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
 
-  const categoryQuery = useCategoryActions();
 
   const {
     read,
@@ -27,9 +30,13 @@ const SubUpdate = () => {
 
   const { data, isLoading } = read(slug);
 
+  const categoryQuery = useCategoryActions();
 
   useEffect(() => {
-    setParentInput(data?.category?.id);
+    console.log("IN");
+    // setParentInput(data?.category?.id);
+    setParentInput(categoryId);
+
   }, []);
 
 
@@ -44,7 +51,7 @@ const SubUpdate = () => {
         const options = {
           slug: slug,
           name: enteredName,
-          category: parentInput,
+          categoryId: parentInput,
           // parent: parentInput,
         };
 
@@ -83,13 +90,17 @@ const SubUpdate = () => {
               <option>Please select</option>
               {
                 // categoryQuery.list.data?.length > 0 &&
+                parentInput &&
                 categoryQuery.list.data?.map((item) => {
+                  // console.log("categoryQuery.list.data item: ", item);
+                  console.log("parentInput: ", parentInput);
+
                   return <option
                     key={item.id}
                     value={item.id}
-                    // defaultValue={item._id === parentInput}
-                    // selected={item.id === parentInput}
-                    selected={item.id === data?.category?.id}
+                    // defaultValue={item.id === parentInput}
+                    selected={item.id === parentInput}
+                  // selected={item.id === data?.category?.id}
 
                   >
                     {item.name}

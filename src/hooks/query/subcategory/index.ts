@@ -87,21 +87,21 @@ export const useSubCategoryActions = () => {
     onSuccess: (data, variables, context) => {
       // Runs only there is a success
       // saves http trip to the back-end
-      console.log("onSuccess data: ", data);
-      if (data) {
-        utils.subcategory.list.setData(undefined, (oldQueryData) => {
-          console.log("onSuccess subcategory oldQueryData: ", oldQueryData);
-          const newQueryData = oldQueryData?.filter(
-            (item) => item.name !== data.name
-          );
-          console.log("onSuccess subcategory newQueryData: ", newQueryData);
-          newQueryData?.unshift(data);
-          console.log("onSuccess after unshift newQueryData: ", newQueryData);
+      console.log("onSuccess subcategory data: ", data);
+      // if (data) {
+      //   utils.subcategory.list.setData(undefined, (oldQueryData) => {
+      //     console.log("onSuccess subcategory oldQueryData: ", oldQueryData);
+      //     const newQueryData = oldQueryData?.filter(
+      //       (item) => item.name !== data.name
+      //     );
+      //     console.log("onSuccess subcategory newQueryData: ", newQueryData);
+      //     newQueryData?.unshift(data);
+      //     console.log("onSuccess after unshift newQueryData: ", newQueryData);
 
-          return newQueryData;
-        });
-        // toast.success(`"${data.name}" is created`);
-      }
+      //     return newQueryData;
+      //   });
+      //   // toast.success(`"${data.name}" is created`);
+      // }
     },
     onSettled: async (data, error, variables, context) => {
       // if (error) {

@@ -10,7 +10,7 @@ export const useCategoryActions = () => {
     // Selectors like the one bellow will also run on every render, because the functional identity changes (it's an inline function). If your transformation is expensive, you can memoize it either with useCallback, or by extracting it to a stable function reference
     select: useCallback((data: Category[]) => {
       // selectors will only be called if data exists, so you don't have to care about undefined here.
-      console.log("useCallback list data: ", data);
+      console.log("useCallback category list data: ", data);
       return data;
     }, []),
     staleTime: Infinity, // stays in fresh State for ex:1000ms(or Infinity) then turns into Stale State
@@ -86,21 +86,21 @@ export const useCategoryActions = () => {
     onSuccess: (data, variables, context) => {
       // Runs only there is a success
       // saves http trip to the back-end
-      console.log("onSuccess data: ", data);
-      if (data) {
-        utils.category.list.setData(undefined, (oldQueryData) => {
-          console.log("onSuccess oldQueryData: ", oldQueryData);
-          const newQueryData = oldQueryData?.filter(
-            (item) => item.name !== data.name
-          );
-          console.log("onSuccess newQueryData: ", newQueryData);
-          newQueryData?.unshift(data);
-          console.log("onSuccess after unshift newQueryData: ", newQueryData);
+      console.log("onSuccess category data: ", data);
+      // if (data) {
+      //   utils.category.list.setData(undefined, (oldQueryData) => {
+      //     console.log("onSuccess oldQueryData: ", oldQueryData);
+      //     const newQueryData = oldQueryData?.filter(
+      //       (item) => item.name !== data.name
+      //     );
+      //     console.log("onSuccess newQueryData: ", newQueryData);
+      //     newQueryData?.unshift(data);
+      //     console.log("onSuccess after unshift newQueryData: ", newQueryData);
 
-          return newQueryData;
-        });
-        // toast.success(`"${data.name}" is created`);
-      }
+      //     return newQueryData;
+      //   });
+      //   // toast.success(`"${data.name}" is created`);
+      // }
     },
     onSettled: async (data, error, variables, context) => {
       // if (error) {

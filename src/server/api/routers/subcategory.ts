@@ -27,7 +27,10 @@ export const subcategoryRouter = createTRPCRouter({
     list: publicProcedure.query(({ ctx }) => {
         return ctx.prisma.subCategory.findMany
             ({
-                orderBy: { createdAt: 'desc' }
+                orderBy: { createdAt: 'desc' },
+                include: {
+                    category: true
+                }
             })
     }),
 
@@ -75,15 +78,19 @@ export const subcategoryRouter = createTRPCRouter({
             z.object({
                 name: z.string(),
                 slug: z.string(),
-                category: z.string(),
+                categoryId: z.string(),
 
             }),
         )
         .mutation(({ ctx, input }) => {
+            console.log("input.slug: ", input.slug);
+            console.log("input.name: ", input.name);
+            console.log("input.categoryId: ", input.categoryId);
+
             return ctx.prisma.subCategory.update(
                 {
                     where: { slug: input.slug },
-                    data: { name: input.name, slug: slugify(input.name), categoryId: input.category }
+                    data: { name: input.name, slug: slugify(input.name), categoryId: input.categoryId }
                 }
             )
         }),

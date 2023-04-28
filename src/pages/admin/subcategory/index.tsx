@@ -26,7 +26,7 @@ const SubCreate = () => {
     remove: mutationRemoveSubCategory
   } = useSubCategoryActions();
 
-
+  console.log("subcategory data:", data);
 
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -108,36 +108,35 @@ const SubCreate = () => {
               // error={mutationCreateCategory.error}
               handleSubmit={handleSubmit}
             />
-
-
             <LocalSearch keyword={keyword} setKeyword={setKeyword} />
 
             {isError ? (
               <h4 className="text-danger">{error?.message}</h4>
             ) : data?.length ? (
               data.filter(searched(keyword)).map((item) => (
-                <div className="alert alert-secondary" key={item.id}>
+                < div className="alert alert-secondary" key={item.id} >
                   {item.name}
+
                   <span
                     onClick={() => handleRemove(item.slug)}
                     className="btn btn-sm float-right"
                   >
                     <DeleteOutlined className="text-danger" />
                   </span>
-                  <Link href={`/admin/subcategory/${item.slug}`}>
+                  <Link href={`/admin/subcategory/${item.slug}/${item.category?.id}`}>
                     <span className="btn btn-sm float-right">
                       <EditOutlined className="text-warning" />
                     </span>
                   </Link>
                 </div>
-              ))
-            ) : (
+              )
+              )) : (
               <p>No Data</p>
             )}
           </div>
-        </div>
-      </AdminRoute>
-    </div>
+        </div >
+      </AdminRoute >
+    </div >
   );
 };
 
