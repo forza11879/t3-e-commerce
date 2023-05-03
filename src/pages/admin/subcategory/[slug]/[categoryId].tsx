@@ -11,17 +11,14 @@ import {
 
 const SubUpdate = () => {
   const router = useRouter()
-  const slug = router.query.slug as string
-  const categoryId = router.query.categoryId as string
 
-  console.log("categoryId: ", categoryId);
-  console.log("slug: ", slug);
+  const slug = typeof router.query?.slug === 'string' ? router.query.slug : '';
 
+  const categoryId = typeof router.query?.categoryId === 'string' ? router.query.categoryId : '';
 
   const [parentInput, setParentInput] = useState('');
   const formRef = useRef<HTMLFormElement>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
-
 
   const {
     read,
@@ -33,10 +30,7 @@ const SubUpdate = () => {
   const categoryQuery = useCategoryActions();
 
   useEffect(() => {
-    console.log("IN");
-    // setParentInput(data?.category?.id);
     setParentInput(categoryId);
-
   }, []);
 
 
@@ -51,8 +45,7 @@ const SubUpdate = () => {
         const options = {
           slug: slug,
           name: enteredName,
-          categoryId: parentInput,
-          // parent: parentInput,
+          categoryId: categoryId,
         };
 
         mutationUpdateSubCategory.mutate(options);
@@ -92,8 +85,6 @@ const SubUpdate = () => {
                 // categoryQuery.list.data?.length > 0 &&
                 parentInput &&
                 categoryQuery.list.data?.map((item) => {
-                  // console.log("categoryQuery.list.data item: ", item);
-                  console.log("parentInput: ", parentInput);
 
                   return <option
                     key={item.id}

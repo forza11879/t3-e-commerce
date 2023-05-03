@@ -27,10 +27,7 @@ export const subcategoryRouter = createTRPCRouter({
     list: publicProcedure.query(({ ctx }) => {
         return ctx.prisma.subCategory.findMany
             ({
-                orderBy: { createdAt: 'desc' },
-                include: {
-                    category: true
-                }
+                orderBy: { createdAt: 'desc' }
             })
     }),
 
@@ -44,16 +41,10 @@ export const subcategoryRouter = createTRPCRouter({
             console.log("back-end input.slug: ", input.slug);
             const subcategory = await ctx.prisma.subCategory.findFirstOrThrow(
                 {
-                    where: { slug: input.slug },
-                    include: {
-                        category: true
-                    }
-
+                    where: { slug: input.slug }
                 }
             )
 
-
-            console.log("subcategory back-end:  ", subcategory);
             // const products = await ctx.prisma.product.findMany(
             //     {
             //         where: {

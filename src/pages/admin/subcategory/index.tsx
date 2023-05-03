@@ -26,11 +26,8 @@ const SubCreate = () => {
     remove: mutationRemoveSubCategory
   } = useSubCategoryActions();
 
-  console.log("subcategory data:", data);
-
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
-
     try {
       if (nameInputRef.current && formRef.current) {
         const enteredName = nameInputRef.current.value;
@@ -39,7 +36,6 @@ const SubCreate = () => {
           name: enteredName,
           categoryId: category,
         };
-        console.log({ options });
 
         mutationCreateSubCategory.mutate(options);
         formRef.current.reset();
@@ -123,7 +119,7 @@ const SubCreate = () => {
                   >
                     <DeleteOutlined className="text-danger" />
                   </span>
-                  <Link href={`/admin/subcategory/${item.slug}/${item.category?.id}`}>
+                  <Link href={`/admin/subcategory/${item.slug}/${item.categoryId}`}>
                     <span className="btn btn-sm float-right">
                       <EditOutlined className="text-warning" />
                     </span>
