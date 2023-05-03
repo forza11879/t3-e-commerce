@@ -45,7 +45,7 @@ const SubUpdate = () => {
         const options = {
           slug: slug,
           name: enteredName,
-          categoryId: categoryId,
+          categoryId: parentInput,
         };
 
         mutationUpdateSubCategory.mutate(options);
