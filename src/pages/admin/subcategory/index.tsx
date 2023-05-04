@@ -10,6 +10,7 @@ import AdminNav from "@/components/nav/AdminNav";
 import CategoryForm from "@/components/forms/CategoryForm";
 import LocalSearch from "@/components/forms/LocalSearch";
 import type { SubCategory } from '@prisma/client';
+import { Routes } from '@/utils/routes'
 
 const SubCreate = () => {
   const [category, setCategory] = useState("");
@@ -119,7 +120,7 @@ const SubCreate = () => {
                   >
                     <DeleteOutlined className="text-danger" />
                   </span>
-                  <Link href={`/admin/subcategory/${item.slug}/${item.categoryId}`}>
+                  <Link href={Routes.ADMIN.SUBCATEGORY.createPath(item.slug, item.categoryId)}>
                     <span className="btn btn-sm float-right">
                       <EditOutlined className="text-warning" />
                     </span>
